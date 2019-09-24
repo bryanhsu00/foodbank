@@ -38,7 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # 'corsheaders',
+    'user',
     'inventory',
+    'backstage',
 ]
 
 MIDDLEWARE = [
@@ -138,10 +140,13 @@ STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = 262144000 #250MB
-# AUTH_USER_MODEL = 'user.User' 
+AUTH_USER_MODEL = 'user.User' 
 
 # if not DEBUG:
 #     SESSION_COOKIE_SECURE = True
 #     SESSION_COOKIE_HTTPONLY = True
 #     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTOCOL', 'https')
 #     SECURE_SSL_REDIRECT = True
+
+PROJECT_NAME = "Food Bank"
+BACKSTAGE_ROOT = "http://127.0.0.1:8000/backstage"
