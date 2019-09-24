@@ -1,0 +1,37 @@
+<div class="sidebar">
+    <nav class="sidebar-nav">
+        <ul class="nav">
+            {% for category in side_nav.category %}
+            <li class="nav-title">{{ category.title }}</li>
+                {% for app in category.app %}
+                    {% if app.isDropdown %}
+                    <li class="nav-item nav-dropdown">
+                        <a class="nav-link nav-dropdown-toggle" href="#">
+                            <i class="material-icons md-16">{{ app.icon }}</i> {{ app.name }}
+                        </a>
+                        <ul class="nav-dropdown-items">
+                            {% for item in app.item %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ item.link }}">
+                                    <i class="material-icons md-16">{{ item.icon }}</i> {{ item.title }}
+                                </a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    {% else %}
+                        {% for item in app.item %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ item.link }}">
+                                <i class="material-icons md-16">{{ item.icon }}</i> {{ item.title }}
+                            </a>
+                        </li>
+                        {% endfor %}
+                    {% endif%}
+                    <li class="divider"></li>
+                {% endfor %}
+            {% endfor %}
+        </ul>
+    </nav>
+    <button class="sidebar-minimizer brand-minimizer" type="button"></button>
+</div>

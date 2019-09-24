@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>
+        {% block title %}
+        {% endblock %}
+    </title>
+    {% include 'backstage/head_source.html' %}
+  </head>
+  {% block customized_css %}
+  {% endblock %}
+  <body class="app header-fixed sidebar-fixed aside-menu-fixed sidebar-lg-show aside-menu-hidden">
+    {% include 'backstage/header.html' %}
+    <div class="app-body">
+        {% include 'backstage/left_side_nav.html' %}
+        <main class="main">
+            {% include 'backstage/breadcrumb.html' %}
+            <div class="container-fluid">
+                <div class="animated fadeIn">
+                    {% block main %}
+                    {% endblock %}
+                </div>
+            </div>
+        </main>
+        {% include 'backstage/right_side_nav.html' %}
+    </div>
+    {% include 'backstage/footer.html' %}
+    {% include 'backstage/foot_source.html' %}
+    {% block customized_js %}
+    {% endblock %}
+  </body>
+</html>
