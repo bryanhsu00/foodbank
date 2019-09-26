@@ -91,20 +91,20 @@ DATABASES = {
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
 
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
-]
+# AUTH_PASSWORD_VALIDATORS = [
+#     {
+#         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+#     },
+#     {
+#         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+#     },
+#     {
+#         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+#     },
+#     {
+#         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+#     },
+# ]
 
 
 # Internationalization
@@ -140,7 +140,7 @@ STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = 262144000 #250MB
-AUTH_USER_MODEL = 'user.User' 
+AUTH_USER_MODEL = 'user.User'
 
 # if not DEBUG:
 #     SESSION_COOKIE_SECURE = True
@@ -150,3 +150,6 @@ AUTH_USER_MODEL = 'user.User'
 
 PROJECT_NAME = "Food Bank"
 BACKSTAGE_ROOT = "http://127.0.0.1:8000/backstage"
+
+LOGIN_REDIRECT_URL = 'home'
+LOGOUT_REDIRECT_URL = 'home'
