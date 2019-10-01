@@ -1,0 +1,10 @@
+<h1>Agency</h1>
+<ul>
+{% for agency in object_list %}
+    {{ agency.name }} <br>
+    {{ agency.contact_person }} <br>
+    {{ agency.phone_number }} <br>
+    {{ agency.email }} <br>
+    {{ agency.is_food_bank }} <br>
+{% endfor %}
+</ul>

@@ -6,6 +6,7 @@ from django.contrib.auth import authenticate
 from django.contrib import auth
 from django.conf import settings
 from .models import *
+from inventory.models import *
 
 ### 
 
@@ -40,12 +41,24 @@ def get_side_nav(request):
             "app" : [
                 {
                     "name" : "new_app",
-                    "icon" : "subject",
-                    "isDropdown" : False, #false顯示item第一個
+                    "icon" : "accessibility", #gogole icon
+                    "isDropdown" : True, #false顯示item第一個
                     "item" : [
                         {
                             "title" : "new_item",
                             "link" : "#",
+                            "icon" : "subject", 
+                        }
+                    ]
+                },
+                {
+                    "name" : "agency",
+                    "icon" : "accessibility", #gogole icon
+                    "isDropdown" : True, #false顯示item第一個
+                    "item" : [
+                        {
+                            "title" : "list",
+                            "link" : settings.BACKSTAGE_ROOT+"/agency",
                             "icon" : "subject", 
                         }
                     ]
@@ -100,10 +113,29 @@ def index(request):
     # if not check:
     #     return response
 
-    extend_breadcrumb_items_array = ["index"]
+    extend_breadcrumb_items_array = ["index", "hello"]
     dict_for_view = get_base_dict_for_view(request,extend_breadcrumb_items_array)
 
     response = render(request, 'backstage/index.html',dict_for_view)
+    return response
+
+def agancy_list(request):
+    # check, response = check_permission(request)
+    # if not check:
+    #     return response
+
+    extend_breadcrumb_items_array = ["agency"]
+    dict_for_view = get_base_dict_for_view(request,extend_breadcrumb_items_array)
+    o = Agency.objects.all()
+    # dict_for_view.update({
+    #     "object_list" : o
+    # })
+
+    dict_for_view["object_list"] = o
+
+    print(dict_for_view)
+
+    response = render(request, 'backstage/agency_list.html', dict_for_view)
     return response
 
 def login_page(request):
