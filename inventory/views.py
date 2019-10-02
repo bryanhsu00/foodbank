@@ -12,26 +12,27 @@ def agency_list(request):
     return render(request, template, dict_for_view)
 
 def agency_create(request):
-    template = 'inventory/agency_form.html'
+    template = 'inventory/agency_form.html' # 指定html檔案 
     dict_for_view = get_base_dict_for_view(["agency"])
-    form = AgencyForm(request.POST or None)
-    dict_for_view["form"] = form
-    if form.is_valid():
-        form.save()
-        return redirect('agency_list')
+    form = AgencyForm(request.POST or None) # 從post拿取form資料
+    if form.is_valid(): # 檢查form是否合格
+        form.save() # 若合格則存入資料庫
+        return redirect('agency_list') # 頁面導回/agency_list
+    dict_for_view['object'] = request.POST # 若form不合格 則把使用者打的資料回傳給html
     return render(request, template, dict_for_view)
 
 def agency_update(request, pk):
     template = 'inventory/agency_form.html'
     dict_for_view = get_base_dict_for_view(["agency"])
-    agency = get_object_or_404(Agency, pk=pk)
+    agency = get_object_or_404(Agency, pk=pk) # 用pk去拿取資料
+    dict_for_view["object"] = agency
     form = AgencyForm(request.POST or None, instance=agency)
-    dict_for_view["form"] = form
     if form.is_valid():
         form.save()
         return redirect('agency_list')
+    dict_for_view['object'] = request.POST
     return render(request, template, dict_for_view)
-
+    
 def agency_delete(request, pk):
     template_name='inventory/agency_confirm_delete.html'
     dict_for_view = get_base_dict_for_view(["agency"])
