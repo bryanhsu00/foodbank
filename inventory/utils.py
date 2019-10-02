@@ -1,12 +1,9 @@
-from django.shortcuts import render
 from django.http import JsonResponse,HttpResponse,HttpResponseRedirect
 from django.shortcuts import get_object_or_404
-
+from django.shortcuts import render
 from django.contrib.auth import authenticate
 from django.contrib import auth
 from django.conf import settings
-from .models import *
-from inventory.models import *
 
 ### 
 
@@ -18,7 +15,7 @@ def get_extend_breadcrumb_items(items_array):
             tmp_string += "/"+items_array[j]
         extend_breadcrumb_items.append({
             "title" : items_array[i],
-            "link" : settings.BACKSTAGE_ROOT+tmp_string,
+            "link" : settings.INVENTORY_ROOT+tmp_string,
             "isActive" : False,
         })
     extend_breadcrumb_items[-1]["isActive"] = True
@@ -34,31 +31,31 @@ def get_breadcrumb_menu():
     ]
     return menu
 
-def get_side_nav(request):
+def get_side_nav():
     category = [
         {
             "title" : "new_project",
             "app" : [
                 {
-                    "name" : "new_app",
-                    "icon" : "accessibility", #gogole icon
-                    "isDropdown" : True, #false顯示item第一個
+                    "name" : "agency",
+                    "icon" : "subject", #gogole icon
+                    "isDropdown" : False, #false顯示item第一個
                     "item" : [
                         {
-                            "title" : "new_item",
-                            "link" : "#",
-                            "icon" : "subject", 
+                            "title" : "agency",
+                            "link" : settings.INVENTORY_ROOT+"agency_list",
+                            "icon" : "subject",
                         }
                     ]
                 },
                 {
-                    "name" : "agency",
-                    "icon" : "accessibility", #gogole icon
-                    "isDropdown" : True, #false顯示item第一個
+                    "name" : "individual",
+                    "icon" : "subject", #gogole icon
+                    "isDropdown" : False, #false顯示item第一個
                     "item" : [
                         {
                             "title" : "list",
-                            "link" : settings.BACKSTAGE_ROOT+"/agency",
+                            "link" : settings.INVENTORY_ROOT+"agency",
                             "icon" : "subject", 
                         }
                     ]
@@ -74,14 +71,14 @@ def get_side_nav(request):
     return side_nav
 
 
-def get_base_dict_for_view(request,extend_breadcrumb_items_array):
+def get_base_dict_for_view(extend_breadcrumb_items_array):
     extend_breadcrumb_items = get_extend_breadcrumb_items(extend_breadcrumb_items_array)
     dict_for_view = {
         "PROJECT_NAME" : settings.PROJECT_NAME,
-        "BACKSTAGE_ROOT" : settings.BACKSTAGE_ROOT,
+        "INVENTORY_ROOT" : settings.INVENTORY_ROOT,
         "extend_breadcrumb_items" : extend_breadcrumb_items,
         "breadcrumb_menu" : get_breadcrumb_menu(),
-        "side_nav" : get_side_nav(request),
+        "side_nav" : get_side_nav(),
     }
     return dict_for_view
 
@@ -105,7 +102,7 @@ def response_message_page(request,message):
     return response
 
 def redirect_to_index(request):
-    response = HttpResponseRedirect(settings.BACKSTAGE_ROOT+"/index")
+    response = HttpResponseRedirect(settings.INVENTORY_ROOT+"/index")
     return response
 
 def index(request):
@@ -113,34 +110,15 @@ def index(request):
     # if not check:
     #     return response
 
-    extend_breadcrumb_items_array = ["index", "hello"]
-    dict_for_view = get_base_dict_for_view(request,extend_breadcrumb_items_array)
+    extend_breadcrumb_items_array = ["index"]
+    dict_for_view = get_base_dict_for_view(extend_breadcrumb_items_array)
 
-    response = render(request, 'backstage/index.html',dict_for_view)
-    return response
-
-def agancy_list(request):
-    # check, response = check_permission(request)
-    # if not check:
-    #     return response
-
-    extend_breadcrumb_items_array = ["agency"]
-    dict_for_view = get_base_dict_for_view(request,extend_breadcrumb_items_array)
-    o = Agency.objects.all()
-    # dict_for_view.update({
-    #     "object_list" : o
-    # })
-
-    dict_for_view["object_list"] = o
-
-    print(dict_for_view)
-
-    response = render(request, 'backstage/agency_list.html', dict_for_view)
+    response = render(request, 'inventory/index.html', dict_for_view)
     return response
 
 def login_page(request):
     dict_for_view = {
         "PROJECT_NAME" : settings.PROJECT_NAME,
     }
-    response = render(request, 'backstage/user/login.html',dict_for_view)
+    response = render(request, 'inventory/user/login.html',dict_for_view)
     return response

@@ -1,10 +1,7 @@
 from django.db.models import *
 from django.db import models
-<<<<<<< HEAD
-from django.utils import timezone
-=======
 from user.models import User
->>>>>>> 195d2e15b1afef1100601688c6f5552083a6c842
+from django.utils import timezone
 
 class Agency(models.Model): #捐贈者（單位)
     name = CharField(max_length=30)
@@ -15,18 +12,6 @@ class Agency(models.Model): #捐贈者（單位)
 
     def __str__(self):
         return self.name
-
-class User_Agency(models.Model):
-    user = ForeignKey(
-        User,
-        on_delete="CASCADE",
-        null=False,
-    )
-    agency = ForeignKey(
-        Agency,
-        on_delete="CASCADE",
-        null=False,
-    )
 
 class Individual(models.Model): #捐贈者（個人）
     name = CharField(max_length=30)
@@ -49,31 +34,10 @@ class Household(models.Model): #關懷戶
     authentication_key = CharField(max_length=30, blank=True)
     note = TextField(blank = True)
 
-<<<<<<< HEAD
     def __str__(self):
         return self.name
 
-class Place(models.Model):
-=======
-class DeliveryNote(models.Model):
-    household = ForeignKey(
-        Household,
-        on_delete="CASCADE",
-        null=False,
-    )
-    prefer_day = SmallIntegerField()
-    prefer_period = SmallIntegerField()
-
-class HouseholdRequirement(models.Model):
-    household = ForeignKey(
-        Household,
-        on_delete="CASCADE",
-        null=False,
-    )
-    note = TextField()
-
 class Location(models.Model):
->>>>>>> 195d2e15b1afef1100601688c6f5552083a6c842
     name = CharField(max_length=30)
     agency = ForeignKey(
         Agency,
@@ -111,6 +75,9 @@ class Item(models.Model):
     picture = ImageField(blank = True)
     note = TextField(blank = True)
 
+    def __str__(self):
+        return self.name
+
 class Resource(models.Model):
     item = ForeignKey(
         Item,
@@ -127,6 +94,9 @@ class Resource(models.Model):
     expiration_date = DateField(default=timezone.now, blank=True)
     quantity = IntegerField(default=1)
     note = TextField(blank = True)
+
+    def __str__(self):
+        return '{}, {}, {}'.format(self.item, self.location, self.quantity)
 
 class DonationRecord(models.Model):
     agency = ForeignKey(
@@ -154,11 +124,7 @@ class DonationRecord(models.Model):
         null=True
     )
     quantity = IntegerField(default=1)
-<<<<<<< HEAD
-    donation_time = DateField(default=timezone.now, blank=True)
-=======
     donation_time = DateTimeField(auto_now=True)
->>>>>>> 195d2e15b1afef1100601688c6f5552083a6c842
     note = TextField(blank = True)
 
 class ExpirationRecord(models.Model):
@@ -175,13 +141,10 @@ class ExpirationRecord(models.Model):
         null=True
     )
     quantity = IntegerField(default=1)
-<<<<<<< HEAD
-    record_date = DateField(default=timezone.now, blank=True)
-    note = TextField(blank=True)
-=======
     record_time = DateTimeField(auto_now=True)
     note = TextField()
->>>>>>> 195d2e15b1afef1100601688c6f5552083a6c842
+
+##### 我是分隔線 #####
 
 class ReceiptRecord(models.Model):
     household = ForeignKey(
@@ -197,10 +160,6 @@ class ReceiptRecord(models.Model):
         null=True
     )
     quantity = IntegerField(default=1)
-<<<<<<< HEAD
-    record_date = DateField(default=timezone.now, blank=True)
-    note = TextField(blank = True)
-=======
     record_time = DateTimeField(auto_now=True)
 
 class Waybill(models.Model):
@@ -232,7 +191,6 @@ class Waybill(models.Model):
         blank=True, 
         null=True
     )
->>>>>>> 195d2e15b1afef1100601688c6f5552083a6c842
 
 class Freight(models.Model):
     item = ForeignKey(
@@ -283,3 +241,32 @@ class Content(models.Model):
         null=True,
     )
     quantity = IntegerField()
+
+class User_Agency(models.Model):
+    user = ForeignKey(
+        User,
+        on_delete="CASCADE",
+        null=False,
+    )
+    agency = ForeignKey(
+        Agency,
+        on_delete="CASCADE",
+        null=False,
+    )
+
+class DeliveryNote(models.Model):
+    household = ForeignKey(
+        Household,
+        on_delete="CASCADE",
+        null=False,
+    )
+    prefer_day = SmallIntegerField()
+    prefer_period = SmallIntegerField()
+
+class HouseholdRequirement(models.Model):
+    household = ForeignKey(
+        Household,
+        on_delete="CASCADE",
+        null=False,
+    )
+    note = TextField()

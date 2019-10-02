@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     # 'corsheaders',
     'user',
     'inventory',
-    'backstage',
 ]
 
 MIDDLEWARE = [
@@ -149,7 +148,7 @@ AUTH_USER_MODEL = 'user.User'
 #     SECURE_SSL_REDIRECT = True
 
 PROJECT_NAME = "Food Bank"
-BACKSTAGE_ROOT = "http://127.0.0.1:8000/backstage"
+INVENTORY_ROOT = "http://127.0.0.1:8000/inventory/"
 
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'

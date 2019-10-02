@@ -1,0 +1,21 @@
+{% extends 'backstage/base.html' %}
+{% load static %}
+{% block title %}
+{{ PROJECT_NAME }}
+{% endblock %}
+
+{% block customized_css %}
+{% endblock %}
+
+{% block main %}
+
+<form action="{% url 'agency_create' %}" method="post">
+    {% csrf_token %}
+    {{form.as_p}}
+    <input type="submit" name="" id="">
+</form>
+
+{% endblock %}
+
+{% block customized_js %}
+{% endblock %}

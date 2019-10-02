@@ -1,0 +1,22 @@
+{% extends 'backstage/base.html' %}
+{% load static %}
+{% block title %}
+{{ PROJECT_NAME }}
+{% endblock %}
+
+{% block customized_css %}
+{% endblock %}
+
+{% block main %}
+
+<h1>Agency Details</h1>
+<h2>Name: {{object.name}}</h2>
+{{ object.contact_person }} <br>
+{{ object.phone_number }} <br>
+{{ object.email }} <br>
+{{ object.is_food_bank }} <br>
+
+{% endblock %}
+
+{% block customized_js %}
+{% endblock %}
