@@ -105,20 +105,19 @@ def redirect_to_index(request):
     response = HttpResponseRedirect(settings.INVENTORY_ROOT+"/index")
     return response
 
-def index(request):
-    # check, response = check_permission(request)
-    # if not check:
-    #     return response
+# def login_page(request):
+#     dict_for_view = {
+#         "PROJECT_NAME" : settings.PROJECT_NAME,
+#     }
+#     response = render(request, 'inventory/user/login.html',dict_for_view)
+#     return response
 
-    extend_breadcrumb_items_array = ["index"]
-    dict_for_view = get_base_dict_for_view(extend_breadcrumb_items_array)
-
-    response = render(request, 'inventory/index.html', dict_for_view)
-    return response
-
-def login_page(request):
-    dict_for_view = {
-        "PROJECT_NAME" : settings.PROJECT_NAME,
-    }
-    response = render(request, 'inventory/user/login.html',dict_for_view)
-    return response
+def make_dict_ordered(ordered_list, obj_list):
+    new_list = []
+    for obj in obj_list:
+        new_obj = collections.OrderedDict()
+        for key in ordered_list:
+            new_obj[key] = obj[key]
+        new_obj['id'] = obj['id']
+        new_list.append(new_obj)
+    return new_list

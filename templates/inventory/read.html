@@ -1,0 +1,30 @@
+<a href="/inventory/create/{{ model_name }}">new</a>
+<br>
+<table>
+
+<tr>
+{% for i in name_list %}
+
+    <th>{{ i }}</th>
+
+{% endfor %}
+</tr>
+
+{% for object in object_list %}
+
+    <tr>
+    {% for key, value in object.items %}
+
+        {% if key != 'id '%}
+            <td>{{ value }}</td>
+        {% endif %}
+
+    {% endfor %}
+        <td><a href="/inventory/update/{{ model_name }}/{{ object.id }}">update</a></td>
+        <td><a href="/inventory/delete/{{ model_name }}/{{ object.id }}">delete</a></td>
+    <tr>
+
+
+{% endfor %}
+
+</table>
