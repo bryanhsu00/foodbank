@@ -52,4 +52,7 @@ def delete(request, st, pk):
         return HttpResponseRedirect(reverse('read', args=[st]))
     return render(request, template, {'object':obj})
 
+def QRcodeScanner(request):
+    template = "inventory/QRcodeScanner.html"
+    return render(request, template, {})
     
