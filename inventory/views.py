@@ -74,3 +74,10 @@ def delete(request, st, pk):
 
 
 
+<<<<<<< HEAD
+=======
+def QRcodeScanner(request):
+    template = "inventory/QRcodeScanner.html"
+    return render(request, template, {})
+    
+>>>>>>> 20717c44c9383a2995148252f3ec0d5f9c77a791
