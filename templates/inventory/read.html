@@ -1,6 +1,19 @@
+{% extends 'backstage/base.html' %}
+{% load static %}
+{% block title %}
+{{ PROJECT_NAME }}
+{% endblock %}
+
+{% block customized_css %}
+{% endblock %}
+
+{% block main %}
+
+
 <a href="/inventory/create/{{ model_name }}">new</a>
+<a href="/inventory/">home</a>
 <br>
-<table>
+<table border="1">
 
 <tr>
 {% for i in name_list %}
@@ -15,10 +28,13 @@
     <tr>
     {% for key, value in object.items %}
 
-        {% if key != 'id '%}
-            <td>{{ value }}</td>
+        {% if key != 'id'%}
+            {% if key == 'picture' %}
+                <td><img src="/media/{{ value }}" alt="hello"></td>
+            {% else %}
+                <td>{{ value }}</td>
+            {% endif %}    
         {% endif %}
-
     {% endfor %}
         <td><a href="/inventory/update/{{ model_name }}/{{ object.id }}">update</a></td>
         <td><a href="/inventory/delete/{{ model_name }}/{{ object.id }}">delete</a></td>
@@ -28,3 +44,8 @@
 {% endfor %}
 
 </table>
+
+{% endblock %}
+
+{% block customized_js %}
+{% endblock %}

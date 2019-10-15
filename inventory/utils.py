@@ -42,8 +42,8 @@ def get_side_nav():
                     "isDropdown" : False, #false顯示item第一個
                     "item" : [
                         {
-                            "title" : "agency",
-                            "link" : settings.INVENTORY_ROOT+"agency_list",
+                            "title" : "捐贈單位",
+                            "link" : settings.INVENTORY_ROOT+"read/Agency",
                             "icon" : "subject",
                         }
                     ]
@@ -54,12 +54,120 @@ def get_side_nav():
                     "isDropdown" : False, #false顯示item第一個
                     "item" : [
                         {
-                            "title" : "list",
-                            "link" : settings.INVENTORY_ROOT+"agency",
+                            "title" : "捐贈個人",
+                            "link" : settings.INVENTORY_ROOT+"read/Individual",
                             "icon" : "subject", 
                         }
                     ]
-                }
+                },
+                {
+                    "name" : "household",
+                    "icon" : "subject", #gogole icon
+                    "isDropdown" : False, #false顯示item第一個
+                    "item" : [
+                        {
+                            "title" : "關懷戶",
+                            "link" : settings.INVENTORY_ROOT+"read/Household",
+                            "icon" : "subject", 
+                        }
+                    ]
+                },
+                {
+                    "name" : "location",
+                    "icon" : "subject", #gogole icon
+                    "isDropdown" : False, #false顯示item第一個
+                    "item" : [
+                        {
+                            "title" : "據點",
+                            "link" : settings.INVENTORY_ROOT+"read/Location",
+                            "icon" : "subject", 
+                        }
+                    ]
+                },
+                {
+                    "name" : "category",
+                    "icon" : "subject", #gogole icon
+                    "isDropdown" : False, #false顯示item第一個
+                    "item" : [
+                        {
+                            "title" : "物品分類",
+                            "link" : settings.INVENTORY_ROOT+"read/Category",
+                            "icon" : "subject", 
+                        }
+                    ]
+                },
+                {
+                    "name" : "measure",
+                    "icon" : "subject", #gogole icon
+                    "isDropdown" : False, #false顯示item第一個
+                    "item" : [
+                        {
+                            "title" : "衡量單位",
+                            "link" : settings.INVENTORY_ROOT+"read/Measure",
+                            "icon" : "subject", 
+                        }
+                    ]
+                },
+                {
+                    "name" : "item",
+                    "icon" : "subject", #gogole icon
+                    "isDropdown" : False, #false顯示item第一個
+                    "item" : [
+                        {
+                            "title" : "物品",
+                            "link" : settings.INVENTORY_ROOT+"read/Item",
+                            "icon" : "subject", 
+                        }
+                    ]
+                },
+                {
+                    "name" : "resource",
+                    "icon" : "subject", #gogole icon
+                    "isDropdown" : False, #false顯示item第一個
+                    "item" : [
+                        {
+                            "title" : "庫存",
+                            "link" : settings.INVENTORY_ROOT+"read/Resource",
+                            "icon" : "subject", 
+                        }
+                    ]
+                },
+                {
+                    "name" : "donation_record",
+                    "icon" : "subject", #gogole icon
+                    "isDropdown" : False, #false顯示item第一個
+                    "item" : [
+                        {
+                            "title" : "進貨紀錄",
+                            "link" : settings.INVENTORY_ROOT+"read/DonationRecord ",
+                            "icon" : "subject", 
+                        }
+                    ]
+                },
+                {
+                    "name" : "receipt_record",
+                    "icon" : "subject", #gogole icon
+                    "isDropdown" : False, #false顯示item第一個
+                    "item" : [
+                        {
+                            "title" : "出貨紀錄",
+                            "link" : settings.INVENTORY_ROOT+"read/ReceiptRecord ",
+                            "icon" : "subject", 
+                        }
+                    ]
+                },
+                {
+                    "name" : "expiration_record",
+                    "icon" : "subject", #gogole icon
+                    "isDropdown" : False, #false顯示item第一個
+                    "item" : [
+                        {
+                            "title" : "報廢紀錄",
+                            "link" : settings.INVENTORY_ROOT+"read/ExpirationRecord ",
+                            "icon" : "subject", 
+                        }
+                    ]
+                },
             ]
         }
     ]
@@ -112,12 +220,3 @@ def redirect_to_index(request):
 #     response = render(request, 'inventory/user/login.html',dict_for_view)
 #     return response
 
-def make_dict_ordered(ordered_list, obj_list):
-    new_list = []
-    for obj in obj_list:
-        new_obj = collections.OrderedDict()
-        for key in ordered_list:
-            new_obj[key] = obj[key]
-        new_obj['id'] = obj['id']
-        new_list.append(new_obj)
-    return new_list

@@ -1,5 +1,21 @@
+{% extends 'backstage/base.html' %}
+{% load static %}
+{% block title %}
+{{ PROJECT_NAME }}
+{% endblock %}
+
+{% block customized_css %}
+{% endblock %}
+
+{% block main %}
+
 <form method="post">
     {% csrf_token %}
     Are you sure you want to delete "{{ object }}" ?<br/>
     <input type="submit" value="Delete" />
 </form>
+
+{% endblock %}
+
+{% block customized_js %}
+{% endblock %}

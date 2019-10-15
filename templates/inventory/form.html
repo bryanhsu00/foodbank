@@ -1,8 +1,30 @@
+{% extends 'backstage/base.html' %}
+{% load static %}
+{% block title %}
+  {{ PROJECT_NAME }}
+{% endblock %}
+{% block customized_css %}
+{% endblock %}
 
-<meta charset="utf-8">
-<form method="post">
-{% csrf_token %}
-    <!-- {{ model_name }} -->
-{{ form.as_p }}
-<button type="submit">submit</button>
-</form>
+{% block main %}
+  <h2>form</h2>
+  <form method="post">
+    {% csrf_token %}
+    {% for field in form %}
+      <p>
+        {{ field.label_tag }}<br>
+        {{ field }}
+        {% if field.help_text %}
+          <small style="color: grey">{{ field.help_text }}</small>
+        {% endif %}
+        {% for error in field.errors %}
+          <p style="color: red">{{ error }}</p>
+        {% endfor %}
+      </p>
+    {% endfor %}
+    <button type="submit">Sign up</button>
+  </form>
+{% endblock %}
+
+{% block customized_js %}
+{% endblock %}

@@ -85,7 +85,7 @@ class Location(models.Model): #據點
 
     @staticmethod
     def get_field():
-        return ['name', 'agency', 'address', 'note']
+        return ['name', 'agency_id', 'address', 'note']
 
 class Category(models.Model): #分類
     name = CharField(max_length=30)
@@ -130,7 +130,7 @@ class Item(models.Model): #物品
         blank=True, 
         null=True
     )
-    picture = ImageField(blank = True) 
+    picture = ImageField(blank = True, upload_to='images/') 
     note = TextField(blank = True)
 
     def __str__(self):
@@ -142,7 +142,7 @@ class Item(models.Model): #物品
 
     @staticmethod
     def get_field():
-        return ['name', 'category', 'measure', 'picture', 'note']
+        return ['name', 'category_id', 'measure_id', 'picture', 'note']
 
 class Resource(models.Model): #可用資源
     item = ForeignKey(
@@ -170,7 +170,7 @@ class Resource(models.Model): #可用資源
 
     @staticmethod
     def get_field():
-        return ['item', 'location', 'expiration_date', 'quantity', 'note']
+        return ['item_id', 'location_id', 'expiration_date', 'quantity', 'note']
 
 class DonationRecord(models.Model):
     agency = ForeignKey(
@@ -207,7 +207,7 @@ class DonationRecord(models.Model):
 
     @staticmethod
     def get_field():
-        return ['agency', 'individual', 'location', 'item', 'quantity', 'donation_time', 'note']
+        return ['agency_id', 'individual_id', 'location_id', 'item_id', 'quantity', 'donation_time', 'note']
 
     def __str__(self):
         return '{}, {}, {}, {}, {}'.format(self.agency, self.individual, self.location,
@@ -236,7 +236,7 @@ class ExpirationRecord(models.Model):
 
     @staticmethod
     def get_field():
-        return ['agency', 'item', 'quantity', 'record_time', 'note']
+        return ['agency_id', 'item_id', 'quantity', 'record_time', 'note']
 
 class ReceiptRecord(models.Model):
     household = ForeignKey(
@@ -260,7 +260,7 @@ class ReceiptRecord(models.Model):
 
     @staticmethod
     def get_field():
-        return ['household', 'item', 'quantity', 'record_time']
+        return ['household_id', 'item_id', 'quantity', 'record_time']
 
 ##### 我是分隔線 #####
 # class Waybill(models.Model):

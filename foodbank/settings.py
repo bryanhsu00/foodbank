@@ -148,7 +148,6 @@ AUTH_USER_MODEL = 'user.User'
 #     SECURE_SSL_REDIRECT = True
 
 PROJECT_NAME = "Food Bank"
-INVENTORY_ROOT = "http://127.0.0.1:8000/inventory/"
-
+INVENTORY_ROOT = "/inventory/"
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'

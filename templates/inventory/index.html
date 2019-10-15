@@ -9,7 +9,11 @@
 
 {% block main %}
 
-hello, world!
+{% for i in model_list %}
+
+    <a href="/inventory/read/{{ i }}">{{ i }}</a>
+
+{% endfor %}
 
 {% endblock %}
 
