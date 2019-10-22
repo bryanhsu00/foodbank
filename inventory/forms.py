@@ -1,19 +1,19 @@
 from .models import *
 from django.forms import ModelForm
 
-class AgencyForm(ModelForm):
+class FoodBankForm(ModelForm):
     class Meta:
-        model = Agency
+        model = FoodBank
         fields = '__all__'
 
-class IndividualForm(ModelForm):
+class DonatorForm(ModelForm):
     class Meta:
-        model = Individual
+        model = Donator
         fields = '__all__'
 
-class HouseholdForm(ModelForm):
+class ContacterForm(ModelForm):
     class Meta:
-        model = Household
+        model = Contacter
         fields = '__all__'
 
 class HouseholdForm(ModelForm):
@@ -46,9 +46,9 @@ class ResourceForm(ModelForm):
         model = Resource
         fields = '__all__'
 
-class DonationRecordForm(ModelForm):
+class ReceiveRecordForm(ModelForm):
     class Meta:
-        model = DonationRecord
+        model = ReceiveRecord
         fields = '__all__'
 
 class ExpirationRecordForm(ModelForm):
@@ -56,7 +56,7 @@ class ExpirationRecordForm(ModelForm):
         model = ExpirationRecord
         fields = '__all__'
 
-class ReceiptRecord(ModelForm):
+class SendRecordForm(ModelForm):
     class Meta:
-        model = ReceiptRecord
+        model = SendRecord
         fields = '__all__'

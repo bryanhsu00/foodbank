@@ -8,6 +8,6 @@ urlpatterns = [
     path('create/<str:st>', create, name='create'),
     path('update/<str:st>/<int:pk>', update, name='update'),
     path('delete/<str:st>/<int:pk>', delete, name='delete'),
-
+    path('detail/<str:st>/<int:pk>', detail, name='detail'),
     path('QRcodeScanner', QRcodeScanner, name='QRcodeScanner'),
 ]

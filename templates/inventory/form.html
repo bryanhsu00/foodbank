@@ -1,4 +1,5 @@
 {% extends 'backstage/base.html' %}
+{% load widget_tweaks %}
 {% load static %}
 {% block title %}
   {{ PROJECT_NAME }}
@@ -7,22 +8,24 @@
 {% endblock %}
 
 {% block main %}
-  <h2>form</h2>
-  <form method="post">
+<form method="post" novalidate>
     {% csrf_token %}
-    {% for field in form %}
-      <p>
-        {{ field.label_tag }}<br>
-        {{ field }}
-        {% if field.help_text %}
-          <small style="color: grey">{{ field.help_text }}</small>
-        {% endif %}
-        {% for error in field.errors %}
-          <p style="color: red">{{ error }}</p>
-        {% endfor %}
-      </p>
+  
+    {% for hidden_field in form.hidden_fields %}
+      {{ hidden_field }}
     {% endfor %}
-    <button type="submit">Sign up</button>
+  
+    {% for field in form.visible_fields %}
+      <div class="form-group">
+        {{ field.label_tag }}
+        {% render_field field class="form-control" %}
+        {% if field.help_text %}
+          <small class="form-text text-muted">{{ field.help_text }}</small>
+        {% endif %}
+      </div>
+    {% endfor %}
+  
+    <button type="submit" class="btn btn-primary">Submit</button>
   </form>
 {% endblock %}
 

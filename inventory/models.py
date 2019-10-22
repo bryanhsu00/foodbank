@@ -1,48 +1,67 @@
 from django.db.models import *
-from django.db import models
-from user.models import User
 from django.utils import timezone
 
-class Agency(models.Model): #捐贈者（單位)
-    name = CharField(max_length=30, verbose_name='單位名稱')
-    contact_person = CharField(max_length=30, blank=True, verbose_name='單位負責人')
-    phone_number = CharField(max_length=30, blank=True, verbose_name='聯絡電話')
+class FoodBank(Model):
+    name = CharField(max_length=30, verbose_name='名稱')
+    home_number = CharField(max_length=30, blank=True, verbose_name='市話')
     email = EmailField(max_length=30, blank=True, verbose_name='email')
-    is_food_bank = BooleanField(default=False, verbose_name='食物銀行')
+    address = CharField(max_length=50, blank=True, verbose_name='地址')
+    note = TextField(blank = True, verbose_name='備註')
+
+    @staticmethod
+    def get_limit():
+        return ['name', 'home_number']
 
     def __str__(self):
         return self.name
 
-    @staticmethod
-    def get_verbose():
-        return ['單位名稱', '單位負責人', '聯絡電話', 'email', '食物銀行']
+class Donator(Model):
+    name = CharField(max_length=30, verbose_name='名稱')
+    phone_number = CharField(max_length=30, blank=True, verbose_name='手機')
+    home_number = CharField(max_length=30, blank=True, verbose_name='市話')
+    email = EmailField(max_length=30, blank=True, verbose_name='email')
+    pattern = CharField(
+        max_length=10,
+        choices=[ 
+                    ('Individual', '個人'),
+                    ('Agency', '團體'),
+                    ('FoodBank', '食物銀行')
+                ],
+        default='Individual',
+        verbose_name='類型'
+    )
 
     @staticmethod
-    def get_field():
-        return ['name', 'contact_person', 'phone_number', 'email', 'is_food_bank']
+    def get_limit():
+        return ['name', 'phone_number']
+
+    def __str__(self):
+        return self.name
+    
+class Contacter(Model):
+    donator = ForeignKey(
+        Donator,
+        on_delete = SET_NULL,
+        blank=True, 
+        null=True,
+        verbose_name='所屬單位'
+    )
+    name = CharField(max_length=30, verbose_name='姓名')
+    phone_number = CharField(max_length=30, blank=True, verbose_name='手機')
     
 
-class Individual(models.Model): #捐贈者（個人）
-    name = CharField(max_length=30, verbose_name='名稱')
-    phone_number = CharField(max_length=30, blank=True, verbose_name='手機號碼')
-    email = EmailField(max_length=30, blank=True, verbose_name='email')
+    @staticmethod
+    def get_limit():
+        return ['donator_id', 'name', 'phone_number']
 
     def __str__(self):
         return self.name
 
-    @staticmethod
-    def get_verbose():
-        return ['名稱', '手機號碼', 'email']
-
-    @staticmethod
-    def get_field():
-        return ['name', 'phone_number', 'email']
-
-class Household(models.Model): #關懷戶
+    
+class Household(Model): #關懷戶
     name = CharField(max_length=30, verbose_name='名稱')
-    home_number = CharField(max_length=30, blank=True, verbose_name='家庭號碼')
-    phone_number = CharField(max_length=30, blank=True, verbose_name='手機號碼')
-    email = EmailField(max_length=30, blank=True, verbose_name='email')
+    phone_number = CharField(max_length=30, blank=True, verbose_name='手機')
+    home_number = CharField(max_length=30, blank=True, verbose_name='市話')
     address = CharField(max_length=50, blank=True, verbose_name='地址')
     population = IntegerField(default=1, verbose_name='人數')
     start_date = DateField(default=timezone.now, blank=True, verbose_name='開始日期')
@@ -51,105 +70,85 @@ class Household(models.Model): #關懷戶
     authentication_key = CharField(max_length=30, blank=True, verbose_name='識別碼')
     note = TextField(blank = True, verbose_name='備註')
 
+    @staticmethod
+    def get_limit():
+        return ['name', 'phone_number', 'donator']
+
     def __str__(self):
         return self.name
 
-    @staticmethod
-    def get_verbose():
-        return ['名稱', '家庭號碼', '手機號碼', 'email', '地址', 
-                '人數', '開始日期', '結束日期', '配送', '識別碼', '備註']
-
-    @staticmethod
-    def get_field():
-        return ['name', 'home_number', 'phone_number', 'email', 'address', 
-                'population', 'start_date', 'end_date', 'need_delivery', 
-                'authentication_key', 'note']
-
-class Location(models.Model): #據點
-    name = CharField(max_length=30)
-    agency = ForeignKey(
-        Agency,
+class Location(Model): #據點
+    name = CharField(max_length=30, verbose_name='名稱')
+    foodbank = ForeignKey(
+        FoodBank,
         on_delete = SET_NULL,
         blank=True, 
         null=True,
     )
-    address = CharField(max_length=50, blank=True)
+    address = CharField(max_length=50, blank=True, verbose_name='地址')
     note = TextField(blank = True)
 
+    @staticmethod
+    def get_limit():
+        return ['name', 'address']
+
     def __str__(self):
         return self.name
 
-    @staticmethod
-    def get_verbose():
-        return ['名稱', '單位', '地址', '備註']
-
-    @staticmethod
-    def get_field():
-        return ['name', 'agency_id', 'address', 'note']
-
-class Category(models.Model): #分類
-    name = CharField(max_length=30)
+class Category(Model): #分類
+    name = CharField(max_length=30, verbose_name='分類')
     note = TextField(blank = True)
 
-    def __str__(self):
-        return self.name
-
     @staticmethod
-    def get_verbose():
-        return ['名稱', '備註']
-
-    @staticmethod
-    def get_field():
-        return ['name', 'note']
-
-class Measure(models.Model): #衡量單位
-    name = CharField(max_length=30)
-
-    def __str__(self):
-        return self.name
-
-    @staticmethod
-    def get_verbose():
-        return ['名稱']
-
-    @staticmethod
-    def get_field():
+    def get_limit():
         return ['name']
 
-class Item(models.Model): #物品
-    name = CharField(max_length=30)
+    def __str__(self):
+        return self.name
+
+class Measure(Model): #衡量單位
+    name = CharField(max_length=30, verbose_name='單位')
+
+    @staticmethod
+    def get_limit():
+        return ['name']
+
+    def __str__(self):
+        return self.name
+
+class Item(Model): #物品
+    name = CharField(max_length=30, verbose_name='物品')
     category = ForeignKey(
         Category,
         on_delete = SET_NULL,
         blank=True, 
-        null=True
+        null=True,
+        verbose_name='分類'
     )
     measure = ForeignKey(
         Measure,
         on_delete = SET_NULL,
         blank=True, 
-        null=True
+        null=True,
+        verbose_name='單位'
     )
     picture = ImageField(blank = True, upload_to='images/') 
     note = TextField(blank = True)
 
+    @staticmethod
+    def get_limit():
+        return ['name', 'category_id', 'measure_id']
+
     def __str__(self):
         return self.name
 
-    @staticmethod
-    def get_verbose():
-        return ['名稱', '分類', '單位', '照片', '備註']
-
-    @staticmethod
-    def get_field():
-        return ['name', 'category_id', 'measure_id', 'picture', 'note']
-
-class Resource(models.Model): #可用資源
+class Resource(Model): #庫存
     item = ForeignKey(
         Item,
         on_delete = SET_NULL,
         blank=True, 
-        null=True
+        null=True,
+        verbose_name='物品'
     )
     location = ForeignKey(
         Location,
@@ -158,29 +157,26 @@ class Resource(models.Model): #可用資源
         null=True
     )
     expiration_date = DateField(default=timezone.now, blank=True)
-    quantity = IntegerField(default=1)
+    quantity = IntegerField(default=1, verbose_name='數量')
     note = TextField(blank = True)
+
+    @staticmethod
+    def get_limit():
+        return ['item_id', 'quantity']
 
     def __str__(self):
         return '{}, {}, {}'.format(self.item, self.location, self.quantity)
 
-    @staticmethod
-    def get_verbose():
-        return ['物品', '據點', '有效日期', '數量', '備註']
-
-    @staticmethod
-    def get_field():
-        return ['item_id', 'location_id', 'expiration_date', 'quantity', 'note']
-
-class DonationRecord(models.Model):
-    agency = ForeignKey(
-        Agency,
+class ReceiveRecord(Model): #進貨紀錄
+    donator = ForeignKey(
+        Donator,
         on_delete = SET_NULL,
         blank=True, 
-        null=True
+        null=True,
+        verbose_name='捐贈者'
     )
-    individual = ForeignKey(
-        Individual,
+    contacter = ForeignKey(
+        Contacter,
         on_delete = SET_NULL,
         blank=True, 
         null=True
@@ -195,75 +191,75 @@ class DonationRecord(models.Model):
         Item,
         on_delete = SET_NULL,
         blank=True, 
-        null=True
+        null=True,
+        verbose_name='物品'
     )
-    quantity = IntegerField(default=1)
-    donation_time = DateTimeField(auto_now=True)
+    quantity = IntegerField(default=1, verbose_name='數量')
+    donation_time = DateField(default=timezone.now, blank=True)
     note = TextField(blank = True)
 
     @staticmethod
-    def get_verbose():
-        return ['捐贈者（單位)', '捐贈者（個人)', '據點', '物品', '數量', '捐贈時間', '備註']
-
-    @staticmethod
-    def get_field():
-        return ['agency_id', 'individual_id', 'location_id', 'item_id', 'quantity', 'donation_time', 'note']
+    def get_limit():
+        return ['donator_id', 'item_id', 'quantity']
 
     def __str__(self):
-        return '{}, {}, {}, {}, {}'.format(self.agency, self.individual, self.location,
-                                self.item, self.quantity, )
+        return '{}, {}, {}, {}, {}'.format(self.donator, self.contact_person, 
+                                    self.location, self.item, self.quantity, )
 
-class ExpirationRecord(models.Model):
-    agency = ForeignKey(
-        Agency,
-        on_delete = SET_NULL,
-        blank=True, 
-        null=True
-    )
-    item = ForeignKey(
-        Item,
-        on_delete = SET_NULL,
-        blank=True, 
-        null=True
-    )
-    quantity = IntegerField(default=1)
-    record_time = DateTimeField(auto_now=True)
-    note = TextField()
-
-    @staticmethod
-    def get_verbose():
-        return ['據點', '物品', '數量', '紀錄時間', '備註']
-
-    @staticmethod
-    def get_field():
-        return ['agency_id', 'item_id', 'quantity', 'record_time', 'note']
-
-class ReceiptRecord(models.Model):
+class SendRecord(Model): #出貨紀錄
     household = ForeignKey(
         Household,
         on_delete = SET_NULL,
         blank=True, 
-        null=True
+        null=True,
+        verbose_name='關懷戶'
     )
     item = ForeignKey(
         Item,
         on_delete = SET_NULL,
         blank=True, 
+        null=True,
+        verbose_name='物品'
+    )
+    quantity = IntegerField(default=1, verbose_name='數量')
+    
+    location = ForeignKey(
+        Location,
+        on_delete = SET_NULL,
+        blank=True, 
         null=True
     )
-    quantity = IntegerField(default=1)
-    record_time = DateTimeField(auto_now=True)
+    
+    record_time = DateField(default=timezone.now, blank=True)
+    
+    @staticmethod
+    def get_limit():
+        return ['household_id', 'item_id', 'quantity']
+
+class ExpirationRecord(Model): #報廢紀錄
+    item = ForeignKey(
+        Item,
+        on_delete = SET_NULL,
+        blank=True, 
+        null=True, 
+        verbose_name='物品'
+    )
+    quantity = IntegerField(default=1, verbose_name='數量')
+    location = ForeignKey(
+        Location,
+        on_delete = SET_NULL,
+        blank=True, 
+        null=True
+    )
+    record_time = DateField(default=timezone.now, blank=True, verbose_name='有效期限')
+    note = TextField(blank=True)
 
     @staticmethod
-    def get_verbose():
-        return ['關懷戶', '物品', '數量', '紀錄時間']
-
-    @staticmethod
-    def get_field():
-        return ['household_id', 'item_id', 'quantity', 'record_time']
+    def get_limit():
+        return ['item_id', 'quantity', 'record_time']    
 
 ##### 我是分隔線 #####
-# class Waybill(models.Model):
+# class Waybill(Model):
 #     location_import = ForeignKey(
 #         Location,
 #         related_name='%(class)s_location_import',
@@ -342,19 +338,7 @@ class ReceiptRecord(models.Model):
 #         null=True,
 #     )
 #     quantity = IntegerField()
-
-# class User_Agency(models.Model):
-#     user = ForeignKey(
-#         User,
-#         on_delete="CASCADE",
-#         null=False,
-#     )
-#     agency = ForeignKey(
-#         Agency,
-#         on_delete="CASCADE",
-#         null=False,
-#     )
-
+#
 # class DeliveryNote(models.Model):
 #     household = ForeignKey(
 #         Household,

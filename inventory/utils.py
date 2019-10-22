@@ -5,8 +5,6 @@ from django.contrib.auth import authenticate
 from django.contrib import auth
 from django.conf import settings
 
-### 
-
 def get_extend_breadcrumb_items(items_array):
     extend_breadcrumb_items = []
     for i in range(len(items_array)):
@@ -34,140 +32,128 @@ def get_breadcrumb_menu():
 def get_side_nav():
     category = [
         {
-            "title" : "new_project",
+            "title" : "庫存管理",
             "app" : [
                 {
-                    "name" : "agency",
-                    "icon" : "subject", #gogole icon
+                    # "name" : "捐贈來源",
+                    "icon" : "card_giftcard", #gogole icon
                     "isDropdown" : False, #false顯示item第一個
                     "item" : [
                         {
-                            "title" : "捐贈單位",
-                            "link" : settings.INVENTORY_ROOT+"read/Agency",
-                            "icon" : "subject",
-                        }
-                    ]
-                },
-                {
-                    "name" : "individual",
-                    "icon" : "subject", #gogole icon
-                    "isDropdown" : False, #false顯示item第一個
-                    "item" : [
-                        {
-                            "title" : "捐贈個人",
-                            "link" : settings.INVENTORY_ROOT+"read/Individual",
-                            "icon" : "subject", 
+                            "title" : "進貨",
+                            "link" : settings.INVENTORY_ROOT+"read/Donator",
+                            "icon" : "input", 
                         }
                     ]
                 },
                 {
                     "name" : "household",
-                    "icon" : "subject", #gogole icon
+                    "icon" : "sentiment_satisfied_alt", #gogole icon
                     "isDropdown" : False, #false顯示item第一個
                     "item" : [
                         {
-                            "title" : "關懷戶",
+                            "title" : "出貨",
                             "link" : settings.INVENTORY_ROOT+"read/Household",
+                            "icon" : "reply", 
+                        }
+                    ]
+                },
+                {
+                    "name" : "物品管理",
+                    "icon" : "free_breakfast", #gogole icon
+                    "isDropdown" : True, #false顯示item第一個
+                    "item" : [
+                        {
+                            "title" : "庫存",
+                            "link" : settings.INVENTORY_ROOT+"read/Resource",
+                            "icon" : "save_alt", 
+                        },
+                        {
+                            "title" : "物品",
+                            "link" : settings.INVENTORY_ROOT+"read/Item",
+                            "icon" : "free_breakfast", 
+                        },
+                        {
+                            "title" : "物品分類",
+                            "link" : settings.INVENTORY_ROOT+"read/Category",
+                            "icon" : "format_list_bulleted", 
+                        },
+                        {
+                            "title" : "衡量單位",
+                            "link" : settings.INVENTORY_ROOT+"read/Measure",
+                            "icon" : "format_list_bulleted", 
+                        }
+                    ]
+                },
+                {
+                    "name" : "紀錄管理",
+                    "icon" : "subject", #gogole icon
+                    "isDropdown" : True, #false顯示item第一個
+                    "item" : [
+                        {
+                            "title" : "進貨紀錄",
+                            "link" : settings.INVENTORY_ROOT+"read/ReceiveRecord",
+                            "icon" : "subject", 
+                        },
+                        {
+                            "title" : "出貨紀錄",
+                            "link" : settings.INVENTORY_ROOT+"read/SendRecord",
+                            "icon" : "subject", 
+                        },
+                        {
+                            "title" : "報廢紀錄",
+                            "link" : settings.INVENTORY_ROOT+"read/ExpirationRecord",
                             "icon" : "subject", 
                         }
                     ]
                 },
                 {
-                    "name" : "location",
-                    "icon" : "subject", #gogole icon
+                    "name" : "人員管理",
+                    "icon" : "perm_identity", #gogole icon
+                    "isDropdown" : True, #false顯示item第一個
+                    "item" : [
+                        {
+                            "title" : "捐贈者",
+                            "link" : settings.INVENTORY_ROOT+"read/Donator",
+                            "icon" : "account_box", 
+                        },
+                        {
+                            "title" : "單位負責人",
+                            "link" : settings.INVENTORY_ROOT+"read/Contacter",
+                            "icon" : "house", 
+                        },
+                        {
+                            "title" : "關懷戶",
+                            "link" : settings.INVENTORY_ROOT+"read/Household",
+                            "icon" : "sentiment_satisfied_alt", 
+                        }
+                    ]
+                },
+                {
+                    "name" : "據點",
+                    "icon" : "house", #gogole icon
                     "isDropdown" : False, #false顯示item第一個
                     "item" : [
                         {
                             "title" : "據點",
                             "link" : settings.INVENTORY_ROOT+"read/Location",
-                            "icon" : "subject", 
+                            "icon" : "house",  
                         }
                     ]
                 },
                 {
-                    "name" : "category",
-                    "icon" : "subject", #gogole icon
+                    "name" : "foodback",
+                    "icon" : "house", #gogole icon
                     "isDropdown" : False, #false顯示item第一個
                     "item" : [
                         {
-                            "title" : "物品分類",
-                            "link" : settings.INVENTORY_ROOT+"read/Category",
-                            "icon" : "subject", 
+                            "title" : "食物銀行",
+                            "link" : settings.INVENTORY_ROOT+"read/Foodbank",
+                            "icon" : "house", 
                         }
                     ]
-                },
-                {
-                    "name" : "measure",
-                    "icon" : "subject", #gogole icon
-                    "isDropdown" : False, #false顯示item第一個
-                    "item" : [
-                        {
-                            "title" : "衡量單位",
-                            "link" : settings.INVENTORY_ROOT+"read/Measure",
-                            "icon" : "subject", 
-                        }
-                    ]
-                },
-                {
-                    "name" : "item",
-                    "icon" : "subject", #gogole icon
-                    "isDropdown" : False, #false顯示item第一個
-                    "item" : [
-                        {
-                            "title" : "物品",
-                            "link" : settings.INVENTORY_ROOT+"read/Item",
-                            "icon" : "subject", 
-                        }
-                    ]
-                },
-                {
-                    "name" : "resource",
-                    "icon" : "subject", #gogole icon
-                    "isDropdown" : False, #false顯示item第一個
-                    "item" : [
-                        {
-                            "title" : "庫存",
-                            "link" : settings.INVENTORY_ROOT+"read/Resource",
-                            "icon" : "subject", 
-                        }
-                    ]
-                },
-                {
-                    "name" : "donation_record",
-                    "icon" : "subject", #gogole icon
-                    "isDropdown" : False, #false顯示item第一個
-                    "item" : [
-                        {
-                            "title" : "進貨紀錄",
-                            "link" : settings.INVENTORY_ROOT+"read/DonationRecord ",
-                            "icon" : "subject", 
-                        }
-                    ]
-                },
-                {
-                    "name" : "receipt_record",
-                    "icon" : "subject", #gogole icon
-                    "isDropdown" : False, #false顯示item第一個
-                    "item" : [
-                        {
-                            "title" : "出貨紀錄",
-                            "link" : settings.INVENTORY_ROOT+"read/ReceiptRecord ",
-                            "icon" : "subject", 
-                        }
-                    ]
-                },
-                {
-                    "name" : "expiration_record",
-                    "icon" : "subject", #gogole icon
-                    "isDropdown" : False, #false顯示item第一個
-                    "item" : [
-                        {
-                            "title" : "報廢紀錄",
-                            "link" : settings.INVENTORY_ROOT+"read/ExpirationRecord ",
-                            "icon" : "subject", 
-                        }
-                    ]
-                },
+                }
+
             ]
         }
     ]
@@ -182,7 +168,8 @@ def get_side_nav():
 def get_base_dict_for_view(extend_breadcrumb_items_array):
     extend_breadcrumb_items = get_extend_breadcrumb_items(extend_breadcrumb_items_array)
     dict_for_view = {
-        "PROJECT_NAME" : settings.PROJECT_NAME,
+        # "PROJECT_NAME" : settings.PROJECT_NAME,
+        "PROJECT_NAME" : "甘霖食物銀行",
         "INVENTORY_ROOT" : settings.INVENTORY_ROOT,
         "extend_breadcrumb_items" : extend_breadcrumb_items,
         "breadcrumb_menu" : get_breadcrumb_menu(),

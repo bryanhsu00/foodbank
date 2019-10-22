@@ -5,47 +5,90 @@
 {% endblock %}
 
 {% block customized_css %}
+
+<style type="text/css">
+    .form-control{
+        width:auto;
+        display:inline;
+    }
+    table { 
+        table-layout: fixed;
+        word-wrap: break-word;
+    }
+    .main .container-fluid {
+        padding: 0px 10px 0px 10px;
+    }
+</style>
+
 {% endblock %}
 
 {% block main %}
-
-
-<a href="/inventory/create/{{ model_name }}">new</a>
-<a href="/inventory/">home</a>
-<br>
-<table border="1">
-
-<tr>
-{% for i in name_list %}
-
-    <th>{{ i }}</th>
-
-{% endfor %}
-</tr>
-
-{% for object in object_list %}
-
-    <tr>
-    {% for key, value in object.items %}
-
-        {% if key != 'id'%}
-            {% if key == 'picture' %}
-                <td><img src="/media/{{ value }}" alt="hello"></td>
-            {% else %}
-                <td>{{ value }}</td>
-            {% endif %}    
-        {% endif %}
+<table class="table" id="mytable">
+    <thead class="thead-light">
+        <tr>
+        {% for key, value in object_list.0.items %}
+            {% if key != 'ID' %}    
+                <th>{{ key }}</th>
+            {% endif %}
+        {% endfor %}
+            <th>
+                <a href="/inventory/create/{{ model_name }}" 
+                class="btn btn-info" role="button">新增</a>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for object in object_list %}
+        <tr>
+        {% for key, value in object.items %}
+            {% if key != 'ID' %}
+                <td> {{ value }} </td>
+            {% endif %}
+        {% endfor %}
+            <td>
+                <a href="/inventory/detail/{{ model_name }}/{{ object.ID }}" 
+                    class="btn btn-info" role="button">詳細</a>
+            </td>
+        </tr>
     {% endfor %}
-        <td><a href="/inventory/update/{{ model_name }}/{{ object.id }}">update</a></td>
-        <td><a href="/inventory/delete/{{ model_name }}/{{ object.id }}">delete</a></td>
-    <tr>
-
-
-{% endfor %}
-
+    </tbody>
 </table>
-
 {% endblock %}
 
 {% block customized_js %}
+<script>
+
+$(document).ready(function() {
+    
+    let table = $('#mytable').DataTable({
+        "language": lang,
+    });
+} );
+
+let lang = {
+        "decimal":        "",
+        "emptyTable":     "No data available in table",
+        "info":           "_TOTAL_ 筆資料中的 _START_ 到 _END_ 筆",
+        "infoEmpty":      "Showing 0 to 0 of 0 entries",
+        "infoFiltered":   "(filtered from _MAX_ total entries)",
+        "infoPostFix":    "",
+        "thousands":      ",",
+        "lengthMenu":     "顯示 _MENU_ 筆資料",
+        "loadingRecords": "Loading...",
+        "processing":     "Processing...",
+        "search":         "搜尋 ",
+        "zeroRecords":    "No matching records found",
+        "paginate": {
+            "first":      "First",
+            "last":       "Last",
+            "next":       "下一頁",
+            "previous":   "上一頁"
+        },
+        "aria": {
+            "sortAscending":  ": activate to sort column ascending",
+            "sortDescending": ": activate to sort column descending"
+        }
+    }
+
+</script>
 {% endblock %}

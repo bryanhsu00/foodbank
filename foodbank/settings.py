@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     # 'corsheaders',
     'user',
     'inventory',
+    'widget_tweaks',
 ]
 
 MIDDLEWARE = [
@@ -149,5 +150,5 @@ AUTH_USER_MODEL = 'user.User'
 
 PROJECT_NAME = "Food Bank"
 INVENTORY_ROOT = "/inventory/"
-LOGIN_REDIRECT_URL = 'home'
-LOGOUT_REDIRECT_URL = 'home'
+LOGIN_REDIRECT_URL = '/inventory/'
+LOGOUT_REDIRECT_URL = '/user/login/'

@@ -7,21 +7,6 @@ from django.urls import reverse
 import collections
 import re
 
-def make_dict_ordered(ordered_list, obj_list, st):
-    new_list = []
-    for obj in obj_list:
-        new_obj = collections.OrderedDict()
-        for key in ordered_list:
-            match = re.search(r'^(.*)_id$', key)
-            if match and obj[key] != None:
-                new_obj[key] = apps.get_model('inventory', match.group(1)
-                                .capitalize()).objects.get(pk = obj[key]).__str__()
-            else: 
-                new_obj[key] = obj[key]
-        new_obj['id'] = obj['id']
-        new_list.append(new_obj)
-    return new_list
-
 def index(request):
     d = get_base_dict_for_view(["index"])
     l = []
@@ -34,16 +19,20 @@ def index(request):
 def read(request, st):
     model = apps.get_model('inventory', st)
     template = 'inventory/read.html'
-    object_list = make_dict_ordered(model.get_field(), model.objects.all().values(), st)
-    context = {'object_list' : object_list, 
-                'name_list': model.get_verbose(),
+    object_list = []
+    for i in model.objects.all():
+        object_list.append(convert(i.__dict__, model, model.get_limit()))
+    context = {'object_list' : object_list,
                 'model_name': st}
     context.update(get_base_dict_for_view([st]))
     return render(request, template, context)
 
 def create(request, st):
     template = 'inventory/form.html'
-    form = eval(st + 'Form')(request.POST or None)
+    if request.FILES:
+        form = eval(st + 'Form')(request.POST, request.FILES or None)
+    else:
+        form = eval(st + 'Form')(request.POST or None)
     if form.is_valid():
         form.save()
         return HttpResponseRedirect(reverse('read', args=[st]))
@@ -54,11 +43,22 @@ def create(request, st):
 def update(request, st, pk):
     template = 'inventory/form.html'
     obj = get_object_or_404(apps.get_model('inventory', st), pk=pk)
-    form = eval(st + 'Form')(request.POST or None, instance=obj)
+    if request.FILES:
+        form = eval(st + 'Form')(request.POST, request.FILES or None, instance=obj)
+    else:
+        form = eval(st + 'Form')(request.POST or None, instance=obj)
     if form.is_valid():
         form.save()
-        return HttpResponseRedirect(reverse('read', args=[st]))
+        return HttpResponseRedirect(reverse('detail', args=[st, pk]))
     context = {'form': form, 'model_name': st}
+    context.update(get_base_dict_for_view([st]))
+    return render(request, template, context)
+
+def detail(request, st, pk):
+    template = 'inventory/detail.html'
+    model = apps.get_model('inventory', st)
+    obj = get_object_or_404(apps.get_model('inventory', st), pk=pk)
+    context = {'pk': pk, 'model_name': st, 'obj': convert(obj.__dict__, model)}
     context.update(get_base_dict_for_view([st]))
     return render(request, template, context)
 
@@ -72,12 +72,24 @@ def delete(request, st, pk):
     context.update(get_base_dict_for_view([st]))
     return render(request, template, context)
 
+def convert(d, model, limit = None):
+    if limit:
+        for key, val in d.copy().items():
+            if key not in limit and key != 'id':
+                del d[key]
+    new_d = {}
+    for key, val in d.items():
+        if key == '_state': 
+            continue
+        new_k = model._meta.get_field(key).verbose_name
+        match = re.search(r'^(.*)_id$', key)
+        if match and val != None:        
+            new_d[new_k] = apps.get_model('inventory', match.group(1)
+                .capitalize()).objects.get(pk = val).__str__()
+        else:
+            new_d[new_k] = val
+    return new_d
 
-
-<<<<<<< HEAD
-=======
 def QRcodeScanner(request):
     template = "inventory/QRcodeScanner.html"
     return render(request, template, {})
-    
->>>>>>> 20717c44c9383a2995148252f3ec0d5f9c77a791

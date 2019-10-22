@@ -1,0 +1,37 @@
+{% extends 'backstage/base.html' %}
+{% load static %}
+{% block title %}
+{{ PROJECT_NAME }}
+{% endblock %}
+
+{% block customized_css %}
+
+<style type="text/css">
+    .form-control{
+        width:auto;
+        display:inline;
+    }
+</style>
+
+{% endblock %}
+
+{% block main %}
+
+<table class="table table-bordered">
+    {% for key, value in obj.items %}
+    <tr>
+        <th> {{ key }} </th>
+        <td> {{ value }} </td>
+    </tr>
+    {% endfor %}
+</table>
+
+<a href="/inventory/update/{{ model_name }}/{{ pk }}" 
+    class="btn btn-warning" role="button">修改</a>
+<a href="/inventory/delete/{{ model_name }}/{{ pk }}" 
+    class="btn btn-danger" role="button">刪除</a>
+
+{% endblock %}
+
+{% block customized_js %}
+{% endblock %}
