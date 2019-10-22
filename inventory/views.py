@@ -58,7 +58,7 @@ def detail(request, st, pk):
     template = 'inventory/detail.html'
     model = apps.get_model('inventory', st)
     obj = get_object_or_404(apps.get_model('inventory', st), pk=pk)
-    context = {'pk': pk, 'model_name': st, 'obj': convert(obj.__dict__, model)}
+    context = {'pk': pk, 'model_name': st, 'obj': convert(obj.__dict__, model, model.all_fields())}
     context.update(get_base_dict_for_view([st]))
     return render(request, template, context)
 
@@ -72,11 +72,8 @@ def delete(request, st, pk):
     context.update(get_base_dict_for_view([st]))
     return render(request, template, context)
 
-def convert(dic, model, f=None):
+def convert(dic, model, fields):
     result = collections.OrderedDict()
-    fields = None
-    if f: fields = f
-    else: fields = model.all_fields()
     fields.insert(0, 'id')
     for key in fields:
         new_key = model._meta.get_field(key).verbose_name
