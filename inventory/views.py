@@ -21,7 +21,7 @@ def read(request, st):
     template = 'inventory/read.html'
     object_list = []
     for i in model.objects.all():
-        object_list.append(convert(i.__dict__, model, model.get_limit()))
+        object_list.append(convert(i.__dict__, model, model.view_fields()))
     context = {'object_list' : object_list,
                 'model_name': st}
     context.update(get_base_dict_for_view([st]))
@@ -72,23 +72,21 @@ def delete(request, st, pk):
     context.update(get_base_dict_for_view([st]))
     return render(request, template, context)
 
-def convert(d, model, limit = None):
-    if limit:
-        for key, val in d.copy().items():
-            if key not in limit and key != 'id':
-                del d[key]
-    new_d = {}
-    for key, val in d.items():
-        if key == '_state': 
-            continue
-        new_k = model._meta.get_field(key).verbose_name
+def convert(dic, model, f=None):
+    result = collections.OrderedDict()
+    fields = None
+    if f: fields = f
+    else: fields = model.all_fields()
+    fields.insert(0, 'id')
+    for key in fields:
+        new_key = model._meta.get_field(key).verbose_name
         match = re.search(r'^(.*)_id$', key)
-        if match and val != None:        
-            new_d[new_k] = apps.get_model('inventory', match.group(1)
-                .capitalize()).objects.get(pk = val).__str__()
+        if match and dic[key] != None:
+            result[new_key] = apps.get_model('inventory', 
+                match.group(1).capitalize()).objects.get(pk = dic[key]).__str__()
         else:
-            new_d[new_k] = val
-    return new_d
+            result[new_key] = dic[key]
+    return result
 
 def QRcodeScanner(request):
     template = "inventory/QRcodeScanner.html"

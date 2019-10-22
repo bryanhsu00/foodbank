@@ -6,11 +6,15 @@ class FoodBank(Model):
     home_number = CharField(max_length=30, blank=True, verbose_name='市話')
     email = EmailField(max_length=30, blank=True, verbose_name='email')
     address = CharField(max_length=50, blank=True, verbose_name='地址')
-    note = TextField(blank = True, verbose_name='備註')
+    note = TextField(blank=True, verbose_name='備註')
 
     @staticmethod
-    def get_limit():
+    def view_fields():
         return ['name', 'home_number']
+
+    @staticmethod
+    def all_fields():
+        return ['name', 'home_number', 'email', 'address', 'note']
 
     def __str__(self):
         return self.name
@@ -32,8 +36,12 @@ class Donator(Model):
     )
 
     @staticmethod
-    def get_limit():
+    def view_fields():
         return ['name', 'phone_number']
+
+    @staticmethod
+    def all_fields():
+        return ['name', 'phone_number', 'home_number', 'email', 'pattern']
 
     def __str__(self):
         return self.name
@@ -51,7 +59,11 @@ class Contacter(Model):
     
 
     @staticmethod
-    def get_limit():
+    def view_fields():
+        return ['donator_id', 'name', 'phone_number']
+
+    @staticmethod
+    def all_fields():
         return ['donator_id', 'name', 'phone_number']
 
     def __str__(self):
@@ -71,8 +83,13 @@ class Household(Model): #關懷戶
     note = TextField(blank = True, verbose_name='備註')
 
     @staticmethod
-    def get_limit():
-        return ['name', 'phone_number', 'donator']
+    def view_fields():
+        return ['name', 'phone_number']
+
+    @staticmethod
+    def all_fields():
+        return ['name', 'phone_number', 'home_number', 'address', 'population', 
+        'start_date', 'end_date', 'need_delivery', 'authentication_key', 'note']
 
     def __str__(self):
         return self.name
@@ -89,19 +106,28 @@ class Location(Model): #據點
     note = TextField(blank = True)
 
     @staticmethod
-    def get_limit():
+    def view_fields():
         return ['name', 'address']
+    
+    @staticmethod
+    def all_fields():
+        return ['name', 'foodbank_id', 'address', 'note']
 
     def __str__(self):
         return self.name
+    
 
 class Category(Model): #分類
     name = CharField(max_length=30, verbose_name='分類')
     note = TextField(blank = True)
 
     @staticmethod
-    def get_limit():
+    def view_fields():
         return ['name']
+
+    @staticmethod
+    def all_fields():
+        return ['name', 'note']
 
     def __str__(self):
         return self.name
@@ -110,7 +136,11 @@ class Measure(Model): #衡量單位
     name = CharField(max_length=30, verbose_name='單位')
 
     @staticmethod
-    def get_limit():
+    def view_fields():
+        return ['name']
+    
+    @staticmethod
+    def all_fields():
         return ['name']
 
     def __str__(self):
@@ -136,9 +166,13 @@ class Item(Model): #物品
     note = TextField(blank = True)
 
     @staticmethod
-    def get_limit():
+    def view_fields():
         return ['name', 'category_id', 'measure_id']
-
+    
+    @staticmethod
+    def all_fields():
+        return ['name', 'category_id', 'measure_id', 'picture', 'note']
+        
     def __str__(self):
         return self.name
 
@@ -148,7 +182,7 @@ class Resource(Model): #庫存
         on_delete = SET_NULL,
         blank=True, 
         null=True,
-        verbose_name='物品'
+        verbose_name='物品',
     )
     location = ForeignKey(
         Location,
@@ -161,8 +195,12 @@ class Resource(Model): #庫存
     note = TextField(blank = True)
 
     @staticmethod
-    def get_limit():
+    def view_fields():
         return ['item_id', 'quantity']
+    
+    @staticmethod
+    def all_fields():
+        return ['item_id', 'location_id', 'expiration_date', 'quantity', 'note']
 
     def __str__(self):
         return '{}, {}, {}'.format(self.item, self.location, self.quantity)
@@ -199,11 +237,16 @@ class ReceiveRecord(Model): #進貨紀錄
     note = TextField(blank = True)
 
     @staticmethod
-    def get_limit():
+    def view_fields():
         return ['donator_id', 'item_id', 'quantity']
+    
+    @staticmethod
+    def all_fields():
+        return ['donator_id', 'contacter_id', 'location_id', 
+        'item_id', 'quantity', 'donation_time', 'note']
 
     def __str__(self):
-        return '{}, {}, {}, {}, {}'.format(self.donator, self.contact_person, 
+        return '{}, {}, {}, {}, {}'.format(self.donator, 
                                     self.location, self.item, self.quantity, )
 
 class SendRecord(Model): #出貨紀錄
@@ -229,12 +272,15 @@ class SendRecord(Model): #出貨紀錄
         blank=True, 
         null=True
     )
-    
     record_time = DateField(default=timezone.now, blank=True)
     
     @staticmethod
-    def get_limit():
+    def view_fields():
         return ['household_id', 'item_id', 'quantity']
+    
+    @staticmethod
+    def all_fields():
+        return ['household_id', 'item_id', 'quantity', 'location_id', 'record_time']
 
 class ExpirationRecord(Model): #報廢紀錄
     item = ForeignKey(
@@ -255,8 +301,12 @@ class ExpirationRecord(Model): #報廢紀錄
     note = TextField(blank=True)
 
     @staticmethod
-    def get_limit():
+    def view_fields():
         return ['item_id', 'quantity', 'record_time']    
+    
+    @staticmethod
+    def all_fields():
+        return ['item_id', 'quantity', 'location_id', 'record_time', 'note']
 
 ##### 我是分隔線 #####
 # class Waybill(Model):

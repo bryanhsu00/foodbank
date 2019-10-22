@@ -1,5 +1,9 @@
 from .models import *
 from django.forms import ModelForm
+from django import forms
+
+class DateInput(forms.DateInput):
+    input_type = 'date'
 
 class FoodBankForm(ModelForm):
     class Meta:
@@ -20,6 +24,10 @@ class HouseholdForm(ModelForm):
     class Meta:
         model = Household
         fields = '__all__'
+        widgets = {
+            'start_date': DateInput(),
+            'end_date': DateInput()
+        }
 
 class LocationForm(ModelForm):
     class Meta:
