@@ -68,3 +68,4 @@ __pycache__
 bin
 include
 lib
+nohup.out

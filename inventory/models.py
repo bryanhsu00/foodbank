@@ -101,9 +101,10 @@ class Location(Model): #據點
         on_delete = SET_NULL,
         blank=True, 
         null=True,
+        verbose_name="食物銀行"
     )
     address = CharField(max_length=50, blank=True, verbose_name='地址')
-    note = TextField(blank = True)
+    note = TextField(blank = True, verbose_name="備註")
 
     @staticmethod
     def view_fields():
@@ -119,7 +120,7 @@ class Location(Model): #據點
 
 class Category(Model): #分類
     name = CharField(max_length=30, verbose_name='分類')
-    note = TextField(blank = True)
+    note = TextField(blank = True, verbose_name="備註")
 
     @staticmethod
     def view_fields():
@@ -146,14 +147,14 @@ class Measure(Model): #衡量單位
     def __str__(self):
         return self.name
 
-class Item(Model): #物品
-    name = CharField(max_length=30, verbose_name='物品')
+class Item(Model): #物品名稱
+    name = CharField(max_length=30, verbose_name='物品名稱')
     category = ForeignKey(
         Category,
         on_delete = SET_NULL,
         blank=True, 
         null=True,
-        verbose_name='分類'
+        verbose_name='物品分類'
     )
     measure = ForeignKey(
         Measure,
@@ -162,7 +163,7 @@ class Item(Model): #物品
         null=True,
         verbose_name='單位'
     )
-    picture = ImageField(blank = True, upload_to='images/') 
+    picture = ImageField(blank = True, upload_to='images/', verbose_name="照片") 
     note = TextField(blank = True)
 
     @staticmethod
@@ -182,17 +183,18 @@ class Resource(Model): #庫存
         on_delete = SET_NULL,
         blank=True, 
         null=True,
-        verbose_name='物品',
+        verbose_name='物品名稱',
     )
     location = ForeignKey(
         Location,
         on_delete = SET_NULL,
         blank=True, 
-        null=True
+        null=True,
+	verbose_name='據點'
     )
-    expiration_date = DateField(default=timezone.now, blank=True)
+    expiration_date = DateField(default=timezone.now, blank=True, verbose_name='有效日期')
     quantity = IntegerField(default=1, verbose_name='數量')
-    note = TextField(blank = True)
+    note = TextField(blank = True, verbose_name="備註")
 
     @staticmethod
     def view_fields():
@@ -217,24 +219,26 @@ class ReceiveRecord(Model): #進貨紀錄
         Contacter,
         on_delete = SET_NULL,
         blank=True, 
-        null=True
+        null=True,
+        verbose_name="單位聯絡人"
     )
     location = ForeignKey(
         Location,
         on_delete = SET_NULL,
         blank=True, 
-        null=True
+        null=True, 
+        verbose_name="捐贈據點"
     )
     item = ForeignKey(
         Item,
         on_delete = SET_NULL,
         blank=True, 
         null=True,
-        verbose_name='物品'
+        verbose_name='物品名稱'
     )
     quantity = IntegerField(default=1, verbose_name='數量')
-    donation_time = DateField(default=timezone.now, blank=True)
-    note = TextField(blank = True)
+    donation_time = DateField(default=timezone.now, blank=True, verbose_name="捐贈日期")
+    note = TextField(blank = True, verbose_name="備註")
 
     @staticmethod
     def view_fields():
@@ -262,7 +266,7 @@ class SendRecord(Model): #出貨紀錄
         on_delete = SET_NULL,
         blank=True, 
         null=True,
-        verbose_name='物品'
+        verbose_name='物品名稱'
     )
     quantity = IntegerField(default=1, verbose_name='數量')
     
@@ -270,9 +274,10 @@ class SendRecord(Model): #出貨紀錄
         Location,
         on_delete = SET_NULL,
         blank=True, 
-        null=True
+        null=True, 
+        verbose_name="領取據點"
     )
-    record_time = DateField(default=timezone.now, blank=True)
+    record_time = DateField(default=timezone.now, blank=True, verbose_name="領取日期")
     
     @staticmethod
     def view_fields():
@@ -288,17 +293,18 @@ class ExpirationRecord(Model): #報廢紀錄
         on_delete = SET_NULL,
         blank=True, 
         null=True, 
-        verbose_name='物品'
+        verbose_name='物品名稱'
     )
     quantity = IntegerField(default=1, verbose_name='數量')
     location = ForeignKey(
         Location,
         on_delete = SET_NULL,
         blank=True, 
-        null=True
+        null=True, 
+        verbose_name="據點"
     )
     record_time = DateField(default=timezone.now, blank=True, verbose_name='有效期限')
-    note = TextField(blank=True)
+    note = TextField(blank=True, verbose_name="備註")
 
     @staticmethod
     def view_fields():

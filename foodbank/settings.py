@@ -152,3 +152,4 @@ PROJECT_NAME = "Food Bank"
 INVENTORY_ROOT = "/inventory/"
 LOGIN_REDIRECT_URL = '/inventory/'
 LOGOUT_REDIRECT_URL = '/user/login/'
+LOGIN_URL = '/user/login/'

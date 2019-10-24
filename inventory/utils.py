@@ -41,7 +41,7 @@ def get_side_nav():
                     "item" : [
                         {
                             "title" : "進貨",
-                            "link" : settings.INVENTORY_ROOT+"read/Donator",
+                            "link" : settings.INVENTORY_ROOT+"create/ReceiveRecord",
                             "icon" : "input", 
                         }
                     ]
@@ -53,7 +53,7 @@ def get_side_nav():
                     "item" : [
                         {
                             "title" : "出貨",
-                            "link" : settings.INVENTORY_ROOT+"read/Household",
+                            "link" : settings.INVENTORY_ROOT+"create/SendRecord",
                             "icon" : "reply", 
                         }
                     ]
