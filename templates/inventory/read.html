@@ -23,36 +23,49 @@
 {% endblock %}
 
 {% block main %}
-<table class="table" id="mytable">
-    <thead class="thead-light">
-        <tr>
-        {% for key, value in object_list.0.items %}
-            {% if key != 'ID' %}    
-                <th>{{ key }}</th>
-            {% endif %}
-        {% endfor %}
-            <th>
-                <a href="/inventory/create/{{ model_name }}" 
-                class="btn btn-warning" role="button">新增</a>
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-    {% for object in object_list %}
-        <tr>
-        {% for key, value in object.items %}
-            {% if key != 'ID' %}
-                <td> {{ value }} </td>
-            {% endif %}
-        {% endfor %}
-            <td>
-                <a href="/inventory/detail/{{ model_name }}/{{ object.ID }}" 
-                    class="btn btn-info" role="button">詳細</a>
-            </td>
-        </tr>
-    {% endfor %}
-    </tbody>
-</table>
+<div class="card">
+    <div class="card-header">物品列表</div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-responsive-sm table-striped" id="mytable">
+                <thead class="thead-light">
+                    <tr>
+                    {% for key, value in object_list.0.items %}
+                        {% if key != 'ID' %}    
+                            <th>{{ key }}</th>
+                        {% endif %}
+                    {% endfor %}
+                        <th>
+                            詳細資訊
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for object in object_list %}
+                    <tr>
+                    {% for key, value in object.items %}
+                        {% if key != 'ID' %}
+                            <td> {{ value }} </td>
+                        {% endif %}
+                    {% endfor %}
+                        <td>
+                            <a href="/inventory/detail/{{ model_name }}/{{ object.ID }}" 
+                                class="btn btn-outline-info" role="button">Detail</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <br/>
+        <center>
+            <a href="/inventory/create/{{ model_name }}" class="btn btn-info" role="button">新增</a>
+        </center>
+        <br/>
+        <br/>
+        </div>
+        
+    </div>
+</div>
 {% endblock %}
 
 {% block customized_js %}
