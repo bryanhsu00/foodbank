@@ -1,0 +1,68 @@
+{% extends 'backstage/base.html' %}
+{% load widget_tweaks %}
+{% load static %}
+{% block title %}
+  {{ PROJECT_NAME }}
+{% endblock %}
+{% block customized_css %}
+
+<style>
+
+input[type=number]{
+    width: 115px;
+}
+
+</style>
+
+{% endblock %}
+
+{% block main %}
+
+<form method="post">
+    {% csrf_token %}
+  
+    {% for field in form.visible_fields %}
+        <div class="form-group">
+            {{ field.label_tag }}
+            {% render_field field class="form-control" %}
+            {% if field.help_text %}
+            <small class="form-text text-muted">{{ field.help_text }}</small>
+            {% endif %}
+            {% for error in field.errors %}
+            <p style="color: red">{{ error }}</p>
+            {% endfor %}
+        </div>
+    {% endfor %}
+
+    {{ formset.management_form }}
+    {% for form in formset %}
+    <div id="formset-{{ forloop.counter0 }}"
+         class="form-row">
+        {% for field in form.visible_fields %}
+            <div class="form-group">
+                {{ field.label_tag }}
+                {% render_field field class="form-control" %}
+                {% if field.help_text %}
+                <small class="form-text text-muted">{{ field.help_text }}</small>
+                {% endif %}
+                {% for error in field.errors %}
+                <p style="color: red">{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endfor %}
+        <div class="form-group">
+            <label for="">&nbsp;</label>
+            <input class="form-control btn btn-success add-form-row" type="button" value="+">
+        </div>
+    </div>
+    {% endfor %}
+
+    <button type="submit" class="btn btn-primary">提交</button>
+
+</form>
+{% endblock %}
+
+{% block customized_js %}
+<script src="{% static 'vendors/inventory/filterOption.js' %}"></script>
+<script src="{% static 'vendors/inventory/formset.js' %}"></script>
+{% endblock %}

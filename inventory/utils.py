@@ -1,9 +1,24 @@
 from django.http import JsonResponse,HttpResponse,HttpResponseRedirect
-from django.shortcuts import get_object_or_404
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.contrib.auth import authenticate
 from django.contrib import auth
 from django.conf import settings
+from django.apps import apps
+import re
+import collections
+
+def convert(dic, model, fields):
+    result = collections.OrderedDict()
+    fields.insert(0, 'id')
+    for key in fields:
+        new_key = model._meta.get_field(key).verbose_name
+        match = re.search(r'^(.*)_id$', key)
+        if match and dic[key] != None:
+            result[new_key] = apps.get_model('inventory', 
+                match.group(1).capitalize()).objects.get(pk = dic[key]).__str__()
+        else:
+            result[new_key] = dic[key]
+    return result
 
 def get_extend_breadcrumb_items(items_array):
     extend_breadcrumb_items = []

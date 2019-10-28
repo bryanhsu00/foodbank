@@ -1,5 +1,5 @@
 from .models import *
-from django.forms import ModelForm
+from django.forms import ModelForm ,formset_factory
 from django import forms
 
 class DateInput(forms.DateInput):
@@ -59,12 +59,35 @@ class ReceiveRecordForm(ModelForm):
         model = ReceiveRecord
         fields = '__all__'
 
+class SendRecordForm(ModelForm):
+    class Meta:
+        model = SendRecord
+        fields = '__all__'
+
 class ExpirationRecordForm(ModelForm):
     class Meta:
         model = ExpirationRecord
         fields = '__all__'
 
-class SendRecordForm(ModelForm):
+###
+
+class CreateReceiveForm(ModelForm):
+    class Meta:
+        model = ReceiveRecord
+        fields = ['donator', 'contacter', 'location', 'donation_time', 'note'] # ['item', 'quantity']
+
+class ItemReceiveForm(forms.Form):
+    category = forms.ModelChoiceField(queryset=Category.objects.all(), label="分類", required=False)
+    item = forms.ModelChoiceField(queryset=Item.objects.all(), label="物品")
+    quantity = forms.IntegerField(label="數量", initial=1)
+    expiration_date = forms.DateField(label="有效日期", widget=DateInput(), required=False)
+
+class CreateSendForm(ModelForm):
     class Meta:
         model = SendRecord
-        fields = '__all__'
+        fields = ['household', 'location', 'record_time']
+
+class ItemSendForm(forms.Form):
+    category = forms.ModelChoiceField(queryset=Category.objects.all(), label="分類", required=False)
+    item = forms.ModelChoiceField(queryset=Item.objects.all(), label="物品")
+    quantity = forms.IntegerField(label="數量", initial=1)

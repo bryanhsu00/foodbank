@@ -190,22 +190,22 @@ class Resource(Model): #庫存
         on_delete = SET_NULL,
         blank=True, 
         null=True,
-	verbose_name='據點'
+	    verbose_name='據點'
     )
-    expiration_date = DateField(default=timezone.now, blank=True, verbose_name='有效日期')
     quantity = IntegerField(default=1, verbose_name='數量')
-    note = TextField(blank = True, verbose_name="備註")
+    expiration_date = DateField(default=timezone.now, blank=True, null=True, verbose_name='有效日期')
 
     @staticmethod
     def view_fields():
-        return ['item_id', 'quantity']
+        # return ['item_id', 'quantity']
+        return ['item_id', 'location_id', 'expiration_date', 'quantity']
     
     @staticmethod
     def all_fields():
-        return ['item_id', 'location_id', 'expiration_date', 'quantity', 'note']
+        return ['item_id', 'location_id', 'expiration_date', 'quantity']
 
     def __str__(self):
-        return '{}, {}, {}'.format(self.item, self.location, self.quantity)
+        return '{}, {}, {}, {}'.format(self.item, self.location, self.quantity, self.expiration_date)
 
 class ReceiveRecord(Model): #進貨紀錄
     donator = ForeignKey(
@@ -250,8 +250,8 @@ class ReceiveRecord(Model): #進貨紀錄
         'item_id', 'quantity', 'donation_time', 'note']
 
     def __str__(self):
-        return '{}, {}, {}, {}, {}'.format(self.donator, 
-                                    self.location, self.item, self.quantity, )
+        return '{}, {}, {}, {}'.format(self.donator, 
+                                self.location, self.item, self.quantity, )
 
 class SendRecord(Model): #出貨紀錄
     household = ForeignKey(
