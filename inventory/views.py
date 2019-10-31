@@ -12,6 +12,7 @@ class MyException(Exception):
     pass
 
 def create_receive_record(request):
+    context = {}
     ItemFormset = formset_factory(ItemReceiveForm, extra=1)
     template = 'inventory/formset.html'
     if request.method == 'GET':
@@ -40,7 +41,7 @@ def create_receive_record(request):
                 ReceiveRecord.objects.create(**pdata, **idata)
             return HttpResponseRedirect(reverse('read', args=['ReceiveRecord']))
 
-    context = {'form': form, 'formset': formset, 'model_name': 'ReceiveRecord'}
+    context.update({'form': form, 'formset': formset, 'model_name': 'ReceiveRecord'})
     context.update(get_base_dict_for_view(['ReceiveRecord']))
     return render(request, template, context)
 
@@ -65,21 +66,20 @@ def create_send_record(request):
                             .filter(item=idata['item'], location=pdata['location'])\
                             .order_by(F('expiration_date').asc(nulls_last=True))
                         if r.count() == 0:
-                            formset[i].errors['item'] = ['無此物品！']
+                            formset[i].errors['item'] = ['無此物品！']  
                             raise MyException("No this kind of resources!")
                         for obj in r: # 扣掉庫存
                             if obj == r.reverse()[0] and q > obj.quantity:
                                 formset[i].errors['quantity'] = ['數量不足！']
                                 raise MyException("Not enough resources!") 
                             elif obj.quantity > q:
-                                print("2")
                                 obj.quantity = obj.quantity - q
                                 obj.save()
                                 break
                             else:
-                                print("3")
                                 q = q - obj.quantity
                                 obj.delete()
+                        SendRecord.objects.create(**pdata, **idata)
                     return HttpResponseRedirect(reverse('read', args=['SendRecord']))
             except MyException:
                 pass
@@ -166,12 +166,3 @@ def get_items_cate(request):
         else:
             res[d['category_id']] = [{'id':d['id'], 'name':d['name']}]
     return JsonResponse(res)
-
-def get_items_quantity(request, loc_id, item_id):
-    location = get_object_or_404(Location, pk = loc_id)
-    item = get_object_or_404(Item ,pk = item_id)
-    r = Resource.objects\
-        .filter(location = location, item = item)\
-        .aggregate((Sum('quantity')))
-    return JsonResponse(r)
-    # print(location, item, quantity)

@@ -65,4 +65,13 @@ input[type=number]{
 {% block customized_js %}
 <script src="{% static 'vendors/inventory/filterOption.js' %}"></script>
 <script src="{% static 'vendors/inventory/formset.js' %}"></script>
+<script>
+
+let d = document.querySelectorAll('.add-form-row');
+for(let i=0; i<d.length-1; i++){
+    d[i].className = "form-control btn btn-danger remove-form-row";
+    d[i].value = "-";
+}
+
+</script>
 {% endblock %}

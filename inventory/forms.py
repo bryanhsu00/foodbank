@@ -74,7 +74,7 @@ class ExpirationRecordForm(ModelForm):
 class CreateReceiveForm(ModelForm):
     class Meta:
         model = ReceiveRecord
-        fields = ['donator', 'contacter', 'location', 'donation_time', 'note'] # ['item', 'quantity']
+        fields = ['donator', 'contacter', 'location', 'donation_time'] # ['item', 'quantity']
 
 class ItemReceiveForm(forms.Form):
     category = forms.ModelChoiceField(queryset=Category.objects.all(), label="分類", required=False)

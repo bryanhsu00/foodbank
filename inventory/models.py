@@ -238,7 +238,6 @@ class ReceiveRecord(Model): #進貨紀錄
     )
     quantity = IntegerField(default=1, verbose_name='數量')
     donation_time = DateField(default=timezone.now, blank=True, verbose_name="捐贈日期")
-    note = TextField(blank = True, verbose_name="備註")
 
     @staticmethod
     def view_fields():
@@ -247,7 +246,7 @@ class ReceiveRecord(Model): #進貨紀錄
     @staticmethod
     def all_fields():
         return ['donator_id', 'contacter_id', 'location_id', 
-        'item_id', 'quantity', 'donation_time', 'note']
+        'item_id', 'quantity', 'donation_time']
 
     def __str__(self):
         return '{}, {}, {}, {}'.format(self.donator, 

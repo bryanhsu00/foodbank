@@ -20,8 +20,10 @@
 <table class="table table-bordered">
     {% for key, value in obj.items %}
     <tr>
-        <th> {{ key }} </th>
-        <td> {{ value }} </td>
+        {% if key != "ID" %}
+            <th> {{ key }} </th>
+            <td> {{ value }} </td>
+        {% endif %}
     </tr>
     {% endfor %}
 </table>
