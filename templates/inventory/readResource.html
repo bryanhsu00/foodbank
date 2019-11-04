@@ -1,0 +1,43 @@
+{% extends 'backstage/base.html' %}
+{% load static %}
+{% block title %}
+{{ PROJECT_NAME }}
+{% endblock %}
+
+{% block customized_css %}
+
+<style type="text/css">
+    .form-control{
+        width:auto;
+        display:inline;
+    }
+    table { 
+        table-layout: fixed;
+        word-wrap: break-word;
+    }
+    .main .container-fluid {
+        padding: 0px 10px 0px 10px;
+    }
+</style>
+
+{% endblock %}
+
+{% block main %}
+    <div class="table-responsive">
+        <table class="table table-striped" id="mytable">
+            <thead class="thead-light">
+                <tr>
+                    <th>物品名稱</th>
+                    <th>數量</th>
+                    <th>有效日期</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+{% block customized_js %}
+<script src="{% static 'vendors/inventory/readResource.js' %}"></script>
+{% endblock %}

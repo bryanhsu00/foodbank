@@ -49,30 +49,30 @@ def get_side_nav():
         {
             "title" : "庫存管理",
             "app" : [
-                {
-                    # "name" : "捐贈來源",
-                    "icon" : "card_giftcard", #gogole icon
-                    "isDropdown" : False, #false顯示item第一個
-                    "item" : [
-                        {
-                            "title" : "進貨",
-                            "link" : settings.INVENTORY_ROOT+"create/ReceiveRecord",
-                            "icon" : "input", 
-                        }
-                    ]
-                },
-                {
-                    "name" : "household",
-                    "icon" : "sentiment_satisfied_alt", #gogole icon
-                    "isDropdown" : False, #false顯示item第一個
-                    "item" : [
-                        {
-                            "title" : "出貨",
-                            "link" : settings.INVENTORY_ROOT+"create/SendRecord",
-                            "icon" : "reply", 
-                        }
-                    ]
-                },
+                # {
+                #     # "name" : "捐贈來源",
+                #     "icon" : "card_giftcard", #gogole icon
+                #     "isDropdown" : False, #false顯示item第一個
+                #     "item" : [
+                #         {
+                #             "title" : "進貨",
+                #             "link" : settings.INVENTORY_ROOT+"create/ReceiveRecord",
+                #             "icon" : "input", 
+                #         }
+                #     ]
+                # },
+                # {
+                #     "name" : "household",
+                #     "icon" : "sentiment_satisfied_alt", #gogole icon
+                #     "isDropdown" : False, #false顯示item第一個
+                #     "item" : [
+                #         {
+                #             "title" : "出貨",
+                #             "link" : settings.INVENTORY_ROOT+"create/SendRecord",
+                #             "icon" : "reply", 
+                #         }
+                #     ]
+                # },
                 {
                     "name" : "物品管理",
                     "icon" : "free_breakfast", #gogole icon
@@ -145,30 +145,22 @@ def get_side_nav():
                     ]
                 },
                 {
-                    "name" : "據點",
+                    "name" : "地點管理",
                     "icon" : "house", #gogole icon
-                    "isDropdown" : False, #false顯示item第一個
+                    "isDropdown" : True, #false顯示item第一個
                     "item" : [
                         {
                             "title" : "據點",
                             "link" : settings.INVENTORY_ROOT+"read/Location",
                             "icon" : "house",  
-                        }
-                    ]
-                },
-                {
-                    "name" : "foodback",
-                    "icon" : "house", #gogole icon
-                    "isDropdown" : False, #false顯示item第一個
-                    "item" : [
+                        },
                         {
                             "title" : "食物銀行",
                             "link" : settings.INVENTORY_ROOT+"read/Foodbank",
                             "icon" : "house", 
                         }
                     ]
-                }
-
+                },
             ]
         }
     ]

@@ -1,7 +1,7 @@
-from django.db import transaction
+from django.db import transaction, connection
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
-from django.db.models import Sum, F
+from django.db.models import Sum
 from django.urls import reverse
 from django.forms import formset_factory
 from .utils import *
@@ -11,8 +11,14 @@ import json
 class MyException(Exception):
     pass
 
+def read_resource(request):
+    template = 'inventory/readResource.html'
+    st = 'Resource'
+    context = {'model_name': st}
+    context.update(get_base_dict_for_view([st]))
+    return render(request, template, context)
+
 def create_receive_record(request):
-    context = {}
     ItemFormset = formset_factory(ItemReceiveForm, extra=1)
     template = 'inventory/formset.html'
     if request.method == 'GET':
@@ -41,7 +47,7 @@ def create_receive_record(request):
                 ReceiveRecord.objects.create(**pdata, **idata)
             return HttpResponseRedirect(reverse('read', args=['ReceiveRecord']))
 
-    context.update({'form': form, 'formset': formset, 'model_name': 'ReceiveRecord'})
+    context = {'form': form, 'formset': formset, 'model_name': 'ReceiveRecord'}
     context.update(get_base_dict_for_view(['ReceiveRecord']))
     return render(request, template, context)
 
@@ -166,3 +172,48 @@ def get_items_cate(request):
         else:
             res[d['category_id']] = [{'id':d['id'], 'name':d['name']}]
     return JsonResponse(res)
+
+def get_cate(request):
+    data =list(Category.objects.values())
+    return JsonResponse(data, safe=False)
+
+def get_location(request):
+    data =list(Location.objects.values())
+    return JsonResponse(data, safe=False)
+
+def get_resource(request, loc_id, cate_id):
+    sql1 = '''
+        select {}resource.*, {}category.name, {}category.id as cid, \
+        sum({}resource.quantity) as rsum, {}item.name as iname,\
+        min({}resource.expiration_date) as rdate \
+        from {}resource, {}category, {}item \
+        where {}resource.item_id = {}item.id and \
+        {}item.category_id = {}category.id 
+        '''.format(*['inventory_']*13)
+
+    sql2 = ""
+    if loc_id != "None":
+        sql2 += "and {}resource.location_id = {} ".format('inventory_', loc_id)
+    if cate_id != "None":
+        sql2 += "and {}category.id = {} ".format('inventory_', cate_id)
+
+    sql3 = "group by {}resource.item_id".format('inventory_')
+
+    sql = sql1 + sql2 + sql3
+    c = connection.cursor()
+    res = c.execute(sql)
+    descibe = []
+    dict_list = []
+    for i in res.description:
+        descibe.append(i[0])
+    for i in res.fetchall():
+        d = {}
+        for index, content in enumerate(i):
+            d[descibe[index]] = content
+        dict_list.append(d)
+    
+    return JsonResponse({"data":dict_list}, safe=False)
+
+
+
+

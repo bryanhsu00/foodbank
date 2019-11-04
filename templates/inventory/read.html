@@ -23,11 +23,8 @@
 {% endblock %}
 
 {% block main %}
-<div class="card">
-    <div class="card-header">物品列表</div>
-    <div class="card-body">
         <div class="table-responsive">
-            <table class="table table-responsive-sm table-striped" id="mytable">
+            <table class="table table-striped" id="mytable">
                 <thead class="thead-light">
                     <tr>
                     {% for key, value in object_list.0.items %}
@@ -56,16 +53,10 @@
                 {% endfor %}
                 </tbody>
             </table>
-            <br/>
-        <center>
-            <a href="/inventory/create/{{ model_name }}" class="btn btn-info" role="button">新增</a>
-        </center>
-        <br/>
-        <br/>
+            <center>
+                <a href="/inventory/create/{{ model_name }}" class="btn btn-info" role="button">新增</a>
+            </center>
         </div>
-        
-    </div>
-</div>
 {% endblock %}
 
 {% block customized_js %}
@@ -77,6 +68,7 @@ $(document).ready(function() {
         "language": lang,
         "order": [],
     });
+    document.getElementById('mytable_paginate');
 } );
 
 let lang = {
