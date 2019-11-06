@@ -11,6 +11,16 @@ import json
 class MyException(Exception):
     pass
 
+def index(request):
+    print(request.user.foodbank_id)
+    d = get_base_dict_for_view(["index"])
+    l = []
+    for i in apps.get_models():
+        if i._meta.app_label == 'inventory':
+            l.append(i._meta.object_name)
+    d['model_list'] = l
+    return render(request, 'inventory/index.html', d)
+
 def read_resource(request):
     template = 'inventory/readResource.html'
     st = 'Resource'
@@ -93,15 +103,6 @@ def create_send_record(request):
     context.update(get_base_dict_for_view(['SendRecord']))
     return render(request, template, context)
 
-def index(request):
-    d = get_base_dict_for_view(["index"])
-    l = []
-    for i in apps.get_models():
-        if i._meta.app_label == 'inventory':
-            l.append(i._meta.object_name)
-    d['model_list'] = l
-    return render(request, 'inventory/index.html', d)
-
 def read(request, st):
     model = apps.get_model('inventory', st)
     template = 'inventory/read.html'
@@ -120,7 +121,9 @@ def create(request, st):
     else:
         form = eval(st + 'Form')(request.POST or None)
     if form.is_valid():
-        form.save()
+        instance = form.save(commit = False)
+        instance.foodbank_id = int(request.user.foodbank_id)
+        instance.save()
         return HttpResponseRedirect(reverse('read', args=[st]))
     context = {'form': form, 'model_name': st}
     context.update(get_base_dict_for_view([st]))

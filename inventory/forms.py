@@ -14,6 +14,9 @@ class DonatorForm(ModelForm):
     class Meta:
         model = Donator
         fields = '__all__'
+        widgets = {
+            'foodbank': forms.HiddenInput()
+        }
 
 class ContacterForm(ModelForm):
     class Meta:
@@ -26,13 +29,17 @@ class HouseholdForm(ModelForm):
         fields = '__all__'
         widgets = {
             'start_date': DateInput(),
-            'end_date': DateInput()
+            'end_date': DateInput(),
+            'foodbank': forms.HiddenInput()
         }
 
 class LocationForm(ModelForm):
     class Meta:
         model = Location
         fields = '__all__'
+        widgets = {
+            'foodbank': forms.HiddenInput()
+        }
 
 class CategoryForm(ModelForm):
     class Meta:
@@ -62,11 +69,6 @@ class ReceiveRecordForm(ModelForm):
 class SendRecordForm(ModelForm):
     class Meta:
         model = SendRecord
-        fields = '__all__'
-
-class ExpirationRecordForm(ModelForm):
-    class Meta:
-        model = ExpirationRecord
         fields = '__all__'
 
 ###

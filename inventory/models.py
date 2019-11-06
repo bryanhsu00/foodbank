@@ -34,6 +34,13 @@ class Donator(Model):
         default='Individual',
         verbose_name='類型'
     )
+    foodbank = ForeignKey(
+        FoodBank,
+        on_delete = SET_NULL,
+        blank=True, 
+        null=True,
+        verbose_name="食物銀行"
+    )
 
     @staticmethod
     def view_fields():
@@ -76,11 +83,18 @@ class Household(Model): #關懷戶
     home_number = CharField(max_length=30, blank=True, verbose_name='市話')
     address = CharField(max_length=50, blank=True, verbose_name='地址')
     population = IntegerField(default=1, verbose_name='人數')
-    start_date = DateField(default=timezone.now, blank=True, verbose_name='開始日期')
-    end_date = DateField(default=timezone.now, blank=True, verbose_name='結束日期')
-    need_delivery = BooleanField(default=False, verbose_name='配送')
+    start_date = DateField(blank=True, null=True, verbose_name='開始日期')
+    end_date = DateField(blank=True, null=True, verbose_name='結束日期')
+    # need_delivery = BooleanField(default=False, verbose_name='配送')
     authentication_key = CharField(max_length=30, blank=True, verbose_name='識別碼')
     note = TextField(blank = True, verbose_name='備註')
+    foodbank = ForeignKey(
+        FoodBank,
+        on_delete = SET_NULL,
+        blank=True, 
+        null=True,
+        verbose_name="食物銀行"
+    )
 
     @staticmethod
     def view_fields():
@@ -89,7 +103,7 @@ class Household(Model): #關懷戶
     @staticmethod
     def all_fields():
         return ['name', 'phone_number', 'home_number', 'address', 'population', 
-        'start_date', 'end_date', 'need_delivery', 'authentication_key', 'note']
+        'start_date', 'end_date', 'authentication_key', 'note']
 
     def __str__(self):
         return self.name
@@ -116,7 +130,6 @@ class Location(Model): #據點
 
     def __str__(self):
         return self.name
-    
 
 class Category(Model): #分類
     name = CharField(max_length=30, verbose_name='分類')
@@ -286,32 +299,32 @@ class SendRecord(Model): #出貨紀錄
     def all_fields():
         return ['household_id', 'item_id', 'quantity', 'location_id', 'record_time']
 
-class ExpirationRecord(Model): #報廢紀錄
-    item = ForeignKey(
-        Item,
-        on_delete = SET_NULL,
-        blank=True, 
-        null=True, 
-        verbose_name='物品名稱'
-    )
-    quantity = IntegerField(default=1, verbose_name='數量')
-    location = ForeignKey(
-        Location,
-        on_delete = SET_NULL,
-        blank=True, 
-        null=True, 
-        verbose_name="據點"
-    )
-    record_time = DateField(default=timezone.now, blank=True, verbose_name='有效期限')
-    note = TextField(blank=True, verbose_name="備註")
+# class ExpirationRecord(Model): #報廢紀錄
+#     item = ForeignKey(
+#         Item,
+#         on_delete = SET_NULL,
+#         blank=True, 
+#         null=True, 
+#         verbose_name='物品名稱'
+#     )
+#     quantity = IntegerField(default=1, verbose_name='數量')
+#     location = ForeignKey(
+#         Location,
+#         on_delete = SET_NULL,
+#         blank=True, 
+#         null=True, 
+#         verbose_name="據點"
+#     )
+#     record_time = DateField(default=timezone.now, blank=True, verbose_name='有效期限')
+#     note = TextField(blank=True, verbose_name="備註")
 
-    @staticmethod
-    def view_fields():
-        return ['item_id', 'quantity', 'record_time']    
+#     @staticmethod
+#     def view_fields():
+#         return ['item_id', 'quantity', 'record_time']    
     
-    @staticmethod
-    def all_fields():
-        return ['item_id', 'quantity', 'location_id', 'record_time', 'note']
+#     @staticmethod
+#     def all_fields():
+#         return ['item_id', 'quantity', 'location_id', 'record_time', 'note']
 
 ##### 我是分隔線 #####
 # class Waybill(Model):

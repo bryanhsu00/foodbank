@@ -47,7 +47,7 @@ from django.contrib.auth.forms import UserCreationForm
 class MyUserCreationForm(UserCreationForm):
     class Meta:
         model = get_user_model()
-        fields = ("username","food_bank")
+        fields = ("username","foodbank")
 
 class SignUp(generic.CreateView):
 
