@@ -107,7 +107,15 @@ def read(request, st):
     model = apps.get_model('inventory', st)
     template = 'inventory/read.html'
     object_list = []
-    for i in model.objects.all():
+    m = None
+    if getattr(model, "foodbank", False):
+        m = model.objects.filter(foodbank_id = request.user.foodbank_id)
+    elif getattr(model, "location", False):
+        l = Location.objects.filter(foodbank_id = request.user.foodbank_id)
+        m = model.objects.filter(location__name__in=[i.name for i in l])
+    else:
+        m = model.objects.all()
+    for i in m:
         object_list.append(convert(i.__dict__, model, model.view_fields()))
     context = {'object_list' : object_list,
                 'model_name': st}
@@ -147,7 +155,11 @@ def detail(request, st, pk):
     template = 'inventory/detail.html'
     model = apps.get_model('inventory', st)
     obj = get_object_or_404(apps.get_model('inventory', st), pk=pk)
-    context = {'pk': pk, 'model_name': st, 'obj': convert(obj.__dict__, model, model.all_fields())}
+    context = {
+                'pk': pk, 
+                'model_name': st, 
+                'obj': convert(obj.__dict__, model, model.all_fields())
+            }
     context.update(get_base_dict_for_view([st]))
     return render(request, template, context)
 
@@ -165,7 +177,6 @@ def QRcodeScanner(request):
     template = "inventory/QRcodeScanner.html"
     return render(request, template, {})
 
-
 def get_items_cate(request):
     res = {}
     l = list(Item.objects.all().values("id", "name", "category_id"))
@@ -181,18 +192,23 @@ def get_cate(request):
     return JsonResponse(data, safe=False)
 
 def get_location(request):
-    data =list(Location.objects.values())
+    data =list(Location.objects.filter(foodbank_id = request.user.foodbank_id).values())
+    print(data)
     return JsonResponse(data, safe=False)
 
 def get_resource(request, loc_id, cate_id):
+    lst = Location.objects.filter(foodbank_id = request.user.foodbank_id)
+    strLst = str([i.id for i in lst]).replace('[','(').replace(']',')')
+
     sql1 = '''
         select {}resource.*, {}category.name, {}category.id as cid, \
         sum({}resource.quantity) as rsum, {}item.name as iname,\
         min({}resource.expiration_date) as rdate \
         from {}resource, {}category, {}item \
         where {}resource.item_id = {}item.id and \
-        {}item.category_id = {}category.id 
-        '''.format(*['inventory_']*13)
+        {}item.category_id = {}category.id and \
+        {}resource.location_id in {} \
+        '''.format(*['inventory_']*14, strLst)
 
     sql2 = ""
     if loc_id != "None":
@@ -217,6 +233,4 @@ def get_resource(request, loc_id, cate_id):
     
     return JsonResponse({"data":dict_list}, safe=False)
 
-
-
-
+    

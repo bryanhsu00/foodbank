@@ -1,7 +1,5 @@
 from django.http import JsonResponse,HttpResponse,HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
-from django.contrib.auth import authenticate
-from django.contrib import auth
 from django.conf import settings
 from django.apps import apps
 import re
@@ -115,11 +113,11 @@ def get_side_nav():
                             "link" : settings.INVENTORY_ROOT+"read/SendRecord",
                             "icon" : "subject", 
                         },
-                        {
-                            "title" : "報廢紀錄",
-                            "link" : settings.INVENTORY_ROOT+"read/ExpirationRecord",
-                            "icon" : "subject", 
-                        }
+                        # {
+                        #     "title" : "報廢紀錄",
+                        #     "link" : settings.INVENTORY_ROOT+"read/ExpirationRecord",
+                        #     "icon" : "subject", 
+                        # }
                     ]
                 },
                 {
