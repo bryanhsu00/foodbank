@@ -82,15 +82,15 @@ let initOptions = () => {
     </div>`
     );
 
-    ['location', 'cate'].forEach(element => {
-        fetch(`/inventory/get_${element}`)
+    [['Location', 'location'], ['Category', 'cate']].forEach(element => {
+        fetch(`/inventory/api/${element[0]}`)
         .then(res => res.json())
         .then(res => {
             let optionStr = "<option value=''>-------</option>";
             for(let i=0; i<res.length; i++){
                 optionStr += `<option value=${res[i].id}>${res[i].name}</option>`
             }
-            document.getElementById(element).innerHTML = optionStr;
+            document.getElementById(element[1]).innerHTML = optionStr;
         })
         .catch(err => { throw err });
     });

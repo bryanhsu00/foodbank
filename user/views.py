@@ -47,11 +47,11 @@ from django.contrib.auth.forms import UserCreationForm
 class MyUserCreationForm(UserCreationForm):
     class Meta:
         model = get_user_model()
-        fields = ("username","foodbank")
+        fields = ("username", "phone_number", "foodbank")
 
 class SignUp(generic.CreateView):
-
     model = get_user_model()
     form_class = MyUserCreationForm
     success_url = reverse_lazy('login')
-    template_name = 'signup.html'
+    # template_name = 'signup.html'
+    template_name = 'inventory/form.html'

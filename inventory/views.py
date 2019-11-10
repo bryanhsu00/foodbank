@@ -4,6 +4,7 @@ from django.http import HttpResponse, JsonResponse
 from django.db.models import Sum
 from django.urls import reverse
 from django.forms import formset_factory
+from django.contrib.auth.decorators import login_required
 from .utils import *
 from .forms import *
 import json
@@ -11,6 +12,7 @@ import json
 class MyException(Exception):
     pass
 
+@login_required
 def index(request):
     print(request.user.foodbank_id)
     d = get_base_dict_for_view(["index"])
@@ -21,6 +23,7 @@ def index(request):
     d['model_list'] = l
     return render(request, 'inventory/index.html', d)
 
+@login_required
 def read_resource(request):
     template = 'inventory/readResource.html'
     st = 'Resource'
@@ -28,16 +31,26 @@ def read_resource(request):
     context.update(get_base_dict_for_view([st]))
     return render(request, template, context)
 
+@login_required
 def create_receive_record(request):
     ItemFormset = formset_factory(ItemReceiveForm, extra=1)
     template = 'inventory/formset.html'
+    name = None
     if request.method == 'GET':
-        form = CreateReceiveForm(request.GET or None)
+        form = CreateReceiveForm(int(request.user.foodbank_id), request.GET or None)
         formset = ItemFormset()
         
     elif request.method == 'POST':
-        form = CreateReceiveForm(request.POST)
-        formset = ItemFormset(request.POST)
+        r = request.POST.copy()
+        name = r['donator']
+
+        try:
+            r['donator'] = Donator.objects.get(name = r['donator']).id
+        except:
+            pass
+
+        form = CreateReceiveForm(int(request.user.foodbank_id), r)
+        formset = ItemFormset(r)
         if form.is_valid() and formset.is_valid():
             pdata = form.cleaned_data # person data
             for f in formset:
@@ -58,23 +71,36 @@ def create_receive_record(request):
             return HttpResponseRedirect(reverse('read', args=['ReceiveRecord']))
 
     context = {'form': form, 'formset': formset, 'model_name': 'ReceiveRecord'}
+    if request.method == 'POST':
+        context.update({'name': name})
     context.update(get_base_dict_for_view(['ReceiveRecord']))
     return render(request, template, context)
 
+@login_required
 def create_send_record(request):
     ItemFormset = formset_factory(ItemSendForm, extra=1)
     template = 'inventory/formset.html'
+    name = None
     if request.method == 'GET':
-        form = CreateSendForm(request.GET or None)
+        form = CreateSendForm(int(request.user.foodbank_id), request.GET or None)
         formset = ItemFormset()
     elif request.method == 'POST':
-        form = CreateSendForm(request.POST)
-        formset = ItemFormset(request.POST)
+        r = request.POST.copy()
+        name = r['household']
+
+        try:
+            r['household'] = Household.objects.get(name = r['household']).id
+        except:
+            pass
+
+        form = CreateSendForm(int(request.user.foodbank_id), r)
+        formset = ItemFormset(r)
         if form.is_valid() and formset.is_valid():
             pdata = form.cleaned_data
             try:
                 with transaction.atomic():
                     for i, f in enumerate(formset):
+
                         idata = f.cleaned_data # item data
                         idata.pop('category', None)
                         q = idata['quantity']
@@ -99,10 +125,14 @@ def create_send_record(request):
                     return HttpResponseRedirect(reverse('read', args=['SendRecord']))
             except MyException:
                 pass
+
     context = {'form': form, 'formset': formset, 'model_name': 'SendRecord'}
+    if request.method == 'POST':
+        context.update({'name': name})
     context.update(get_base_dict_for_view(['SendRecord']))
     return render(request, template, context)
 
+@login_required
 def read(request, st):
     model = apps.get_model('inventory', st)
     template = 'inventory/read.html'
@@ -122,6 +152,7 @@ def read(request, st):
     context.update(get_base_dict_for_view([st]))
     return render(request, template, context)
 
+@login_required
 def create(request, st):
     template = 'inventory/form.html'
     if request.FILES:
@@ -137,6 +168,7 @@ def create(request, st):
     context.update(get_base_dict_for_view([st]))
     return render(request, template, context)
 
+@login_required
 def update(request, st, pk):
     template = 'inventory/form.html'
     obj = get_object_or_404(apps.get_model('inventory', st), pk=pk)
@@ -151,6 +183,7 @@ def update(request, st, pk):
     context.update(get_base_dict_for_view([st]))
     return render(request, template, context)
 
+@login_required
 def detail(request, st, pk):
     template = 'inventory/detail.html'
     model = apps.get_model('inventory', st)
@@ -163,6 +196,7 @@ def detail(request, st, pk):
     context.update(get_base_dict_for_view([st]))
     return render(request, template, context)
 
+@login_required
 def delete(request, st, pk):
     template = 'inventory/delete.html'
     obj = get_object_or_404(apps.get_model('inventory', st), pk=pk)
@@ -173,11 +207,23 @@ def delete(request, st, pk):
     context.update(get_base_dict_for_view([st]))
     return render(request, template, context)
 
+@login_required
 def QRcodeScanner(request):
     template = "inventory/QRcodeScanner.html"
     return render(request, template, {})
 
-def get_items_cate(request):
+@login_required
+def api(request, st):
+    model = apps.get_model('inventory', st)
+    data = None
+    if getattr(model, "foodbank", False):
+        data = model.objects.filter(foodbank_id = request.user.foodbank_id).values()
+    else:
+        data = model.objects.values()
+    return JsonResponse(list(data), safe=False)
+
+@login_required
+def get_items_cate(request): #取得所有的分類跟其對應的商品
     res = {}
     l = list(Item.objects.all().values("id", "name", "category_id"))
     for d in l:
@@ -187,16 +233,8 @@ def get_items_cate(request):
             res[d['category_id']] = [{'id':d['id'], 'name':d['name']}]
     return JsonResponse(res)
 
-def get_cate(request):
-    data =list(Category.objects.values())
-    return JsonResponse(data, safe=False)
-
-def get_location(request):
-    data =list(Location.objects.filter(foodbank_id = request.user.foodbank_id).values())
-    print(data)
-    return JsonResponse(data, safe=False)
-
-def get_resource(request, loc_id, cate_id):
+@login_required
+def get_resource(request, loc_id, cate_id): #取得據點與分類的庫存
     lst = Location.objects.filter(foodbank_id = request.user.foodbank_id)
     strLst = str([i.id for i in lst]).replace('[','(').replace(']',')')
 
@@ -233,4 +271,3 @@ def get_resource(request, loc_id, cate_id):
     
     return JsonResponse({"data":dict_list}, safe=False)
 
-    

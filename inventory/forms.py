@@ -56,20 +56,20 @@ class ItemForm(ModelForm):
         model = Item
         fields = '__all__'
 
-class ResourceForm(ModelForm):
-    class Meta:
-        model = Resource
-        fields = '__all__'
+# class ResourceForm(ModelForm):
+#     class Meta:
+#         model = Resource
+#         fields = '__all__'
 
-class ReceiveRecordForm(ModelForm):
-    class Meta:
-        model = ReceiveRecord
-        fields = '__all__'
+# class ReceiveRecordForm(ModelForm):
+#     class Meta:
+#         model = ReceiveRecord
+#         fields = '__all__'
 
-class SendRecordForm(ModelForm):
-    class Meta:
-        model = SendRecord
-        fields = '__all__'
+# class SendRecordForm(ModelForm):
+#     class Meta:
+#         model = SendRecord
+#         fields = '__all__'
 
 ###
 
@@ -77,10 +77,20 @@ class CreateReceiveForm(ModelForm):
     class Meta:
         model = ReceiveRecord
         fields = ['donator', 'contacter', 'location', 'donation_time'] # ['item', 'quantity']
+        widgets = {
+            'donation_time': DateInput()
+        }
+
+    def __init__(self, foodbank_id, *args, **kwargs):
+        super(CreateReceiveForm, self).__init__(*args, **kwargs)
+        self.fields['location'].queryset = Location.objects.filter(foodbank_id = foodbank_id)
+        self.fields['location'].required = True
+        self.fields['donator'].queryset = Donator.objects.filter(foodbank_id = foodbank_id)
+        self.fields['donator'].required = True
 
 class ItemReceiveForm(forms.Form):
     category = forms.ModelChoiceField(queryset=Category.objects.all(), label="分類", required=False)
-    item = forms.ModelChoiceField(queryset=Item.objects.all(), label="物品")
+    item = forms.ModelChoiceField(queryset=Item.objects.all(), label="物品", required=True)
     quantity = forms.IntegerField(label="數量", initial=1)
     expiration_date = forms.DateField(label="有效日期", widget=DateInput(), required=False)
 
@@ -88,6 +98,16 @@ class CreateSendForm(ModelForm):
     class Meta:
         model = SendRecord
         fields = ['household', 'location', 'record_time']
+        widgets = {
+            'record_time': DateInput()
+        }
+
+    def __init__(self, foodbank_id, *args, **kwargs):
+        super(CreateSendForm, self).__init__(*args, **kwargs)
+        self.fields['location'].queryset = Location.objects.filter(foodbank_id = foodbank_id)
+        self.fields['location'].required = True
+        self.fields['household'].queryset = Household.objects.filter(foodbank_id = foodbank_id)
+        self.fields['household'].required = True
 
 class ItemSendForm(forms.Form):
     category = forms.ModelChoiceField(queryset=Category.objects.all(), label="分類", required=False)

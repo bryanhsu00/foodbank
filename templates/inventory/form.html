@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block main %}
-<form method="post">
+<form method="post" enctype="multipart/form-data">
     {% csrf_token %}
   
     {% for hidden_field in form.hidden_fields %}
@@ -29,7 +29,7 @@
     {% endfor %}
   
     <button type="submit" class="btn btn-primary">Submit</button>
-  </form>
+</form>
 {% endblock %}
 
 {% block customized_js %}

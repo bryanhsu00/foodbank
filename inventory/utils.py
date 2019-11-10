@@ -1,4 +1,4 @@
-from django.http import JsonResponse,HttpResponse,HttpResponseRedirect
+from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.conf import settings
 from django.apps import apps
@@ -131,15 +131,15 @@ def get_side_nav():
                             "icon" : "account_box", 
                         },
                         {
+                            "title" : "關懷戶",
+                            "link" : settings.INVENTORY_ROOT+"read/Household",
+                            "icon" : "sentiment_satisfied_alt", 
+                        },
+                        {
                             "title" : "單位負責人",
                             "link" : settings.INVENTORY_ROOT+"read/Contacter",
                             "icon" : "house", 
                         },
-                        {
-                            "title" : "關懷戶",
-                            "link" : settings.INVENTORY_ROOT+"read/Household",
-                            "icon" : "sentiment_satisfied_alt", 
-                        }
                     ]
                 },
                 {

@@ -1,5 +1,6 @@
 from django.db.models import *
 from django.utils import timezone
+from django.core.validators import MinValueValidator
 
 class FoodBank(Model):
     name = CharField(max_length=30, verbose_name='名稱')
@@ -82,7 +83,7 @@ class Household(Model): #關懷戶
     phone_number = CharField(max_length=30, blank=True, verbose_name='手機')
     home_number = CharField(max_length=30, blank=True, verbose_name='市話')
     address = CharField(max_length=50, blank=True, verbose_name='地址')
-    population = IntegerField(default=1, verbose_name='人數')
+    population = PositiveIntegerField(default=1, verbose_name='人數', validators=[MinValueValidator(1)])
     start_date = DateField(blank=True, null=True, verbose_name='開始日期')
     end_date = DateField(blank=True, null=True, verbose_name='結束日期')
     # need_delivery = BooleanField(default=False, verbose_name='配送')
@@ -250,7 +251,7 @@ class ReceiveRecord(Model): #進貨紀錄
         verbose_name='物品名稱'
     )
     quantity = IntegerField(default=1, verbose_name='數量')
-    donation_time = DateField(default=timezone.now, blank=True, verbose_name="捐贈日期")
+    donation_time = DateField(default=timezone.now, blank=True, null=True, verbose_name="捐贈日期")
 
     @staticmethod
     def view_fields():
@@ -289,7 +290,7 @@ class SendRecord(Model): #出貨紀錄
         null=True, 
         verbose_name="領取據點"
     )
-    record_time = DateField(default=timezone.now, blank=True, verbose_name="領取日期")
+    record_time = DateField(default=timezone.now, blank=True, null=True, verbose_name="領取日期")
     
     @staticmethod
     def view_fields():

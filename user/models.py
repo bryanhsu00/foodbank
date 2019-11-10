@@ -10,5 +10,5 @@ class User(AbstractUser):
         on_delete = models.SET_NULL,
         blank=True, 
         null=True,
-        default=None
+        verbose_name="食物銀行"
     )
