@@ -35,41 +35,50 @@ def read_resource(request):
 def create_receive_record(request):
     ItemFormset = formset_factory(ItemReceiveForm, extra=1)
     template = 'inventory/formset.html'
-    name = None
+    name = None 
     if request.method == 'GET':
         form = CreateReceiveForm(int(request.user.foodbank_id), request.GET or None)
         formset = ItemFormset()
         
     elif request.method == 'POST':
         r = request.POST.copy()
-        name = r['donator']
+        name = r['donator'] # 取得input值
 
         try:
-            r['donator'] = Donator.objects.get(name = r['donator']).id
+            r['donator'] = Donator.objects.get(name = r['donator']).id # 把值轉成id
         except:
             pass
 
         form = CreateReceiveForm(int(request.user.foodbank_id), r)
         formset = ItemFormset(r)
-        if form.is_valid() and formset.is_valid():
-            pdata = form.cleaned_data # person data
-            for f in formset:
-                idata = f.cleaned_data # item data
-                idata.pop('category', None) # quantity, item, expire
-                r = Resource.objects.filter(
-                                            item=idata['item'], 
-                                            location=pdata['location'], 
-                                            expiration_date=idata['expiration_date']
-                                        )
-                if r.count() == 0:
-                    Resource.objects.create(**idata, location=pdata['location'])
-                else:
-                    q = r[0].quantity
-                    r.update(quantity = q + idata['quantity']) # update all element in queryset
-                idata.pop('expiration_date', None)
-                ReceiveRecord.objects.create(**pdata, **idata)
-            return HttpResponseRedirect(reverse('read', args=['ReceiveRecord']))
-
+        try:
+            if form.is_valid() and formset.is_valid():
+                ### 檢查開始
+                for i, f in enumerate(formset):
+                    idata = f.cleaned_data
+                    if 'item' not in idata:
+                        formset[i].errors['item'] = ['這個欄位是必須的']
+                        raise MyException("no this kind of choice")
+                ### 檢查結束
+                pdata = form.cleaned_data # person data
+                for f in formset:
+                    idata = f.cleaned_data # item data
+                    idata.pop('category', None) # quantity, item, expire
+                    r = Resource.objects.filter(
+                                                item=idata['item'], 
+                                                location=pdata['location'], 
+                                                expiration_date=idata['expiration_date']
+                                            )
+                    if r.count() == 0:
+                        Resource.objects.create(**idata, location=pdata['location'])
+                    else:
+                        q = r[0].quantity
+                        r.update(quantity = q + idata['quantity']) # update all element in queryset
+                    idata.pop('expiration_date', None)
+                    ReceiveRecord.objects.create(**pdata, **idata)
+                return HttpResponseRedirect(reverse('read', args=['ReceiveRecord']))
+        except MyException:
+            pass
     context = {'form': form, 'formset': formset, 'model_name': 'ReceiveRecord'}
     if request.method == 'POST':
         context.update({'name': name})
@@ -100,9 +109,11 @@ def create_send_record(request):
             try:
                 with transaction.atomic():
                     for i, f in enumerate(formset):
-
                         idata = f.cleaned_data # item data
                         idata.pop('category', None)
+                        if 'item' not in idata:
+                            formset[i].errors['item'] = ['這個欄位是必須的']  
+                            raise MyException("This filed is necessary!")
                         q = idata['quantity']
                         r = Resource.objects\
                             .filter(item=idata['item'], location=pdata['location'])\

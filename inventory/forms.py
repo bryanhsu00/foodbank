@@ -1,6 +1,7 @@
 from .models import *
-from django.forms import ModelForm ,formset_factory
+from django.forms import ModelForm ,formset_factory, BaseFormSet
 from django import forms
+from django.core import validators
 
 class DateInput(forms.DateInput):
     input_type = 'date'
@@ -90,8 +91,8 @@ class CreateReceiveForm(ModelForm):
 
 class ItemReceiveForm(forms.Form):
     category = forms.ModelChoiceField(queryset=Category.objects.all(), label="分類", required=False)
-    item = forms.ModelChoiceField(queryset=Item.objects.all(), label="物品", required=True)
-    quantity = forms.IntegerField(label="數量", initial=1)
+    item = forms.ModelChoiceField(queryset=Item.objects.all(), label="物品")
+    quantity = forms.IntegerField(label="數量", min_value=1, initial=1)
     expiration_date = forms.DateField(label="有效日期", widget=DateInput(), required=False)
 
 class CreateSendForm(ModelForm):
@@ -112,4 +113,4 @@ class CreateSendForm(ModelForm):
 class ItemSendForm(forms.Form):
     category = forms.ModelChoiceField(queryset=Category.objects.all(), label="分類", required=False)
     item = forms.ModelChoiceField(queryset=Item.objects.all(), label="物品")
-    quantity = forms.IntegerField(label="數量", initial=1)
+    quantity = forms.IntegerField(label="數量", min_value=1, initial=1)
