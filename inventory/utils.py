@@ -72,6 +72,28 @@ def get_side_nav():
                 #     ]
                 # },
                 {
+                    "name" : "紀錄管理",
+                    "icon" : "subject", #gogole icon
+                    "isDropdown" : True, #false顯示item第一個
+                    "item" : [
+                        {
+                            "title" : "進貨紀錄",
+                            "link" : settings.INVENTORY_ROOT+"read/ReceiveRecord",
+                            "icon" : "subject", 
+                        },
+                        {
+                            "title" : "出貨紀錄",
+                            "link" : settings.INVENTORY_ROOT+"read/SendRecord",
+                            "icon" : "subject", 
+                        },
+                        # {
+                        #     "title" : "報廢紀錄",
+                        #     "link" : settings.INVENTORY_ROOT+"read/ExpirationRecord",
+                        #     "icon" : "subject", 
+                        # }
+                    ]
+                },
+                {
                     "name" : "物品管理",
                     "icon" : "free_breakfast", #gogole icon
                     "isDropdown" : True, #false顯示item第一個
@@ -96,28 +118,6 @@ def get_side_nav():
                             "link" : settings.INVENTORY_ROOT+"read/Measure",
                             "icon" : "format_list_bulleted", 
                         }
-                    ]
-                },
-                {
-                    "name" : "紀錄管理",
-                    "icon" : "subject", #gogole icon
-                    "isDropdown" : True, #false顯示item第一個
-                    "item" : [
-                        {
-                            "title" : "進貨紀錄",
-                            "link" : settings.INVENTORY_ROOT+"read/ReceiveRecord",
-                            "icon" : "subject", 
-                        },
-                        {
-                            "title" : "出貨紀錄",
-                            "link" : settings.INVENTORY_ROOT+"read/SendRecord",
-                            "icon" : "subject", 
-                        },
-                        # {
-                        #     "title" : "報廢紀錄",
-                        #     "link" : settings.INVENTORY_ROOT+"read/ExpirationRecord",
-                        #     "icon" : "subject", 
-                        # }
                     ]
                 },
                 {

@@ -119,11 +119,11 @@ def create_send_record(request):
                             .filter(item=idata['item'], location=pdata['location'])\
                             .order_by(F('expiration_date').asc(nulls_last=True))
                         if r.count() == 0:
-                            formset[i].errors['item'] = ['無此物品！']  
+                            formset[i].errors['item'] = ['無此物品']  
                             raise MyException("No this kind of resources!")
                         for obj in r: # 扣掉庫存
                             if obj == r.reverse()[0] and q > obj.quantity:
-                                formset[i].errors['quantity'] = ['數量不足！']
+                                formset[i].errors['quantity'] = ['數量不足']
                                 raise MyException("Not enough resources!") 
                             elif obj.quantity > q:
                                 obj.quantity = obj.quantity - q
@@ -150,12 +150,12 @@ def read(request, st):
     object_list = []
     m = None
     if getattr(model, "foodbank", False):
-        m = model.objects.filter(foodbank_id = request.user.foodbank_id)
+        m = model.objects.filter(foodbank_id = request.user.foodbank_id).order_by(F('id').desc())
     elif getattr(model, "location", False):
         l = Location.objects.filter(foodbank_id = request.user.foodbank_id)
-        m = model.objects.filter(location__name__in=[i.name for i in l])
+        m = model.objects.filter(location__name__in=[i.name for i in l]).order_by(F('id').desc())
     else:
-        m = model.objects.all()
+        m = model.objects.all().order_by(F('id').desc())
     for i in m:
         object_list.append(convert(i.__dict__, model, model.view_fields()))
     context = {'object_list' : object_list,

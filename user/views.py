@@ -43,13 +43,14 @@ from django.urls import reverse_lazy
 from django.views import generic
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 class MyUserCreationForm(UserCreationForm):
     class Meta:
         model = get_user_model()
         fields = ("username", "phone_number", "foodbank")
 
-class SignUp(generic.CreateView):
+class SignUp(LoginRequiredMixin, generic.CreateView):
     model = get_user_model()
     form_class = MyUserCreationForm
     success_url = reverse_lazy('login')

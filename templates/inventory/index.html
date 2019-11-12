@@ -9,11 +9,9 @@
 
 {% block main %}
 
-{% for i in model_list %}
-
-    <a href="/inventory/read/{{ i }}">{{ i }}</a>
-
-{% endfor %}
+<a href="/inventory/read/ReceiveRecord" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">進貨</a><br>
+<br>
+<a href="/inventory/read/SendRecord" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">出貨</a><br>
 
 {% endblock %}
 
