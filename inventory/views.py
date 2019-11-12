@@ -265,7 +265,7 @@ def get_resource(request, loc_id, cate_id): #取得據點與分類的庫存
     if cate_id != "None":
         sql2 += "and {}category.id = {} ".format('inventory_', cate_id)
 
-    sql3 = "group by {}resource.item_id".format('inventory_')
+    sql3 = "group by {}resource.item_id order by {}resource.id desc".format('inventory_', 'inventory_')
 
     sql = sql1 + sql2 + sql3
     c = connection.cursor()

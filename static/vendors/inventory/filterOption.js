@@ -34,13 +34,12 @@ let changeOption = (id) => {
     item.innerHTML = content;
 }
 
-let resetAllOption = (total) => { // formset中的form數量若有更動所有event需重新bind
-    for(let i=0; i<total; i++){
-        document.getElementById(`id_form-${i}-category`)
-        .addEventListener("change", () => {
-            changeOption(`id_form-${i}`);
-        });
-    }
+let resetAllOption = () => { // formset中的form數量若有更動所有event需重新bind
+    let i = 0;
+    document.getElementById(`id_form-${i}-category`)
+    .addEventListener("change", () => {
+        changeOption(`id_form-${i}`);
+    });
 }
 
 let initRecord = () => {
