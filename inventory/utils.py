@@ -43,56 +43,9 @@ def get_breadcrumb_menu():
     return menu
 
 def get_side_nav():
-    category = [
-        {
+    category = [{
             "title" : "庫存管理",
             "app" : [
-                # {
-                #     # "name" : "捐贈來源",
-                #     "icon" : "card_giftcard", #gogole icon
-                #     "isDropdown" : False, #false顯示item第一個
-                #     "item" : [
-                #         {
-                #             "title" : "進貨",
-                #             "link" : settings.INVENTORY_ROOT+"create/ReceiveRecord",
-                #             "icon" : "input", 
-                #         }
-                #     ]
-                # },
-                # {
-                #     "name" : "household",
-                #     "icon" : "sentiment_satisfied_alt", #gogole icon
-                #     "isDropdown" : False, #false顯示item第一個
-                #     "item" : [
-                #         {
-                #             "title" : "出貨",
-                #             "link" : settings.INVENTORY_ROOT+"create/SendRecord",
-                #             "icon" : "reply", 
-                #         }
-                #     ]
-                # },
-                {
-                    "name" : "紀錄管理",
-                    "icon" : "subject", #gogole icon
-                    "isDropdown" : True, #false顯示item第一個
-                    "item" : [
-                        {
-                            "title" : "進貨紀錄",
-                            "link" : settings.INVENTORY_ROOT+"read/ReceiveRecord",
-                            "icon" : "subject", 
-                        },
-                        {
-                            "title" : "出貨紀錄",
-                            "link" : settings.INVENTORY_ROOT+"read/SendRecord",
-                            "icon" : "subject", 
-                        },
-                        # {
-                        #     "title" : "報廢紀錄",
-                        #     "link" : settings.INVENTORY_ROOT+"read/ExpirationRecord",
-                        #     "icon" : "subject", 
-                        # }
-                    ]
-                },
                 {
                     "name" : "物品管理",
                     "icon" : "free_breakfast", #gogole icon
@@ -118,6 +71,28 @@ def get_side_nav():
                             "link" : settings.INVENTORY_ROOT+"read/Measure",
                             "icon" : "format_list_bulleted", 
                         }
+                    ]
+                },
+                {
+                    "name" : "紀錄管理",
+                    "icon" : "subject", #gogole icon
+                    "isDropdown" : True, #false顯示item第一個
+                    "item" : [
+                        {
+                            "title" : "進貨紀錄",
+                            "link" : settings.INVENTORY_ROOT+"read/ReceiveRecord",
+                            "icon" : "subject", 
+                        },
+                        {
+                            "title" : "出貨紀錄",
+                            "link" : settings.INVENTORY_ROOT+"read/SendRecord",
+                            "icon" : "subject", 
+                        },
+                        # {
+                        #     "title" : "報廢紀錄",
+                        #     "link" : settings.INVENTORY_ROOT+"read/ExpirationRecord",
+                        #     "icon" : "subject", 
+                        # }
                     ]
                 },
                 {
@@ -173,8 +148,8 @@ def get_side_nav():
 def get_base_dict_for_view(extend_breadcrumb_items_array):
     extend_breadcrumb_items = get_extend_breadcrumb_items(extend_breadcrumb_items_array)
     dict_for_view = {
-        # "PROJECT_NAME" : settings.PROJECT_NAME,
-        "PROJECT_NAME" : "甘霖食物銀行",
+        "PROJECT_NAME" : settings.PROJECT_NAME,
+        # "PROJECT_NAME" : "甘霖食物銀行",
         "INVENTORY_ROOT" : settings.INVENTORY_ROOT,
         "extend_breadcrumb_items" : extend_breadcrumb_items,
         "breadcrumb_menu" : get_breadcrumb_menu(),

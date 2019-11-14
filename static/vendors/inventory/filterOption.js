@@ -7,7 +7,7 @@ fetch('/inventory/get_items_cate')
     .catch(err => { throw err });
 
 let getAllElement = () => {
-    res = []
+    let res = []
     for(let index in data){
         data[index].forEach(e => {
             res.push(e);
@@ -19,6 +19,16 @@ let getAllElement = () => {
     return res;
 }
 
+let giveOptions = (total) => {
+    total --;
+    let item = document.getElementById(`id_form-${total}-item`);
+    let arr = getAllElement();
+    let content = "";
+    for(let i=0; i<arr.length; i++)
+        content += `<option value=${arr[i].id}>${arr[i].name}</option>`;
+    item.innerHTML = content;
+}
+
 let changeOption = (id) => {
     let cate = document.getElementById(id + "-category");
     let item = document.getElementById(id + "-item");
@@ -27,19 +37,19 @@ let changeOption = (id) => {
     if(arr === undefined){
         arr = getAllElement();
     }
-    item.innerHTML = "";
     let content = "";
     for(let i=0; i<arr.length; i++)
         content += `<option value=${arr[i].id}>${arr[i].name}</option>`;
     item.innerHTML = content;
 }
 
-let resetAllOption = () => { // formset中的form數量若有更動所有event需重新bind
-    let i = 0;
-    document.getElementById(`id_form-${i}-category`)
-    .addEventListener("change", () => {
-        changeOption(`id_form-${i}`);
-    });
+let resetAllOption = (total) => { // formset中的form數量若有更動所有event需重新bind
+    for(let i=0; i<total; i++){
+        document.getElementById(`id_form-${i}-category`)
+        .addEventListener("change", () => {
+            changeOption(`id_form-${i}`);
+        });
+    }
 }
 
 let initRecord = () => {

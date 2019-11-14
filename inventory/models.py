@@ -7,7 +7,6 @@ class FoodBank(Model):
     home_number = CharField(max_length=30, blank=True, verbose_name='市話')
     email = EmailField(max_length=30, blank=True, verbose_name='email')
     address = CharField(max_length=50, blank=True, verbose_name='地址')
-    note = TextField(blank=True, verbose_name='備註')
 
     @staticmethod
     def view_fields():
@@ -15,7 +14,7 @@ class FoodBank(Model):
 
     @staticmethod
     def all_fields():
-        return ['name', 'home_number', 'email', 'address', 'note']
+        return ['name', 'home_number', 'email', 'address']
 
     def __str__(self):
         return self.name
@@ -64,7 +63,6 @@ class Contacter(Model):
     )
     name = CharField(max_length=30, verbose_name='姓名')
     phone_number = CharField(max_length=30, blank=True, verbose_name='手機')
-    
 
     @staticmethod
     def view_fields():
@@ -88,7 +86,6 @@ class Household(Model): #關懷戶
     end_date = DateField(blank=True, null=True, verbose_name='結束日期')
     # need_delivery = BooleanField(default=False, verbose_name='配送')
     authentication_key = CharField(max_length=30, blank=True, verbose_name='識別碼')
-    note = TextField(blank = True, verbose_name='備註')
     foodbank = ForeignKey(
         FoodBank,
         on_delete = SET_NULL,
@@ -104,7 +101,7 @@ class Household(Model): #關懷戶
     @staticmethod
     def all_fields():
         return ['name', 'phone_number', 'home_number', 'address', 'population', 
-        'start_date', 'end_date', 'authentication_key', 'note']
+        'start_date', 'end_date', 'authentication_key']
 
     def __str__(self):
         return self.name
@@ -119,7 +116,6 @@ class Location(Model): #據點
         verbose_name="食物銀行"
     )
     address = CharField(max_length=50, blank=True, verbose_name='地址')
-    note = TextField(blank = True, verbose_name="備註")
 
     @staticmethod
     def view_fields():
@@ -127,14 +123,13 @@ class Location(Model): #據點
     
     @staticmethod
     def all_fields():
-        return ['name', 'foodbank_id', 'address', 'note']
+        return ['name', 'foodbank_id', 'address']
 
     def __str__(self):
         return self.name
 
 class Category(Model): #分類
     name = CharField(max_length=30, verbose_name='分類')
-    note = TextField(blank = True, verbose_name="備註")
 
     @staticmethod
     def view_fields():
@@ -142,7 +137,7 @@ class Category(Model): #分類
 
     @staticmethod
     def all_fields():
-        return ['name', 'note']
+        return ['name']
 
     def __str__(self):
         return self.name
@@ -177,8 +172,7 @@ class Item(Model): #物品名稱
         null=True,
         verbose_name='單位'
     )
-    picture = ImageField(blank = True, upload_to='images/', verbose_name="照片") 
-    note = TextField(blank = True)
+    picture = ImageField(blank = True, upload_to='images/', verbose_name="照片")
 
     @staticmethod
     def view_fields():
@@ -186,7 +180,7 @@ class Item(Model): #物品名稱
     
     @staticmethod
     def all_fields():
-        return ['name', 'category_id', 'measure_id', 'picture', 'note']
+        return ['name', 'category_id', 'measure_id', 'picture']
         
     def __str__(self):
         return self.name
@@ -207,7 +201,7 @@ class Resource(Model): #庫存
 	    verbose_name='據點'
     )
     quantity = IntegerField(default=1, verbose_name='數量')
-    expiration_date = DateField(default=timezone.now, blank=True, null=True, verbose_name='有效日期')
+    expiration_date = DateField(blank=True, null=True, verbose_name='有效日期')
 
     @staticmethod
     def view_fields():
@@ -251,7 +245,7 @@ class ReceiveRecord(Model): #進貨紀錄
         verbose_name='物品名稱'
     )
     quantity = IntegerField(default=1, verbose_name='數量')
-    donation_time = DateField(default=timezone.now, blank=True, null=True, verbose_name="捐贈日期")
+    donation_time = DateField(blank=True, null=True ,verbose_name="捐贈日期")
 
     @staticmethod
     def view_fields():
@@ -290,7 +284,7 @@ class SendRecord(Model): #出貨紀錄
         null=True, 
         verbose_name="領取據點"
     )
-    record_time = DateField(default=timezone.now, blank=True, null=True, verbose_name="領取日期")
+    record_time = DateField(blank=True, null=True, verbose_name="領取日期")
     
     @staticmethod
     def view_fields():

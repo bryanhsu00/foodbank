@@ -2,6 +2,7 @@ from .models import *
 from django.forms import ModelForm ,formset_factory, BaseFormSet
 from django import forms
 from django.core import validators
+from datetime import datetime
 
 class DateInput(forms.DateInput):
     input_type = 'date'
@@ -29,8 +30,8 @@ class HouseholdForm(ModelForm):
         model = Household
         fields = '__all__'
         widgets = {
-            'start_date': DateInput(),
-            'end_date': DateInput(),
+            'start_date': DateInput(attrs={'class':'datepicker', 'value': datetime.now().strftime("%Y-%m-%d")}),
+            'end_date': DateInput(attrs={'class':'datepicker', 'value': datetime.now().strftime("%Y-%m-%d")}),
             'foodbank': forms.HiddenInput()
         }
 
@@ -62,15 +63,15 @@ class ItemForm(ModelForm):
 #         model = Resource
 #         fields = '__all__'
 
-# class ReceiveRecordForm(ModelForm):
-#     class Meta:
-#         model = ReceiveRecord
-#         fields = '__all__'
+class ReceiveRecordForm(ModelForm):
+    class Meta:
+        model = ReceiveRecord
+        fields = '__all__'
 
-# class SendRecordForm(ModelForm):
-#     class Meta:
-#         model = SendRecord
-#         fields = '__all__'
+class SendRecordForm(ModelForm):
+    class Meta:
+        model = SendRecord
+        fields = '__all__'
 
 ###
 
@@ -79,7 +80,7 @@ class CreateReceiveForm(ModelForm):
         model = ReceiveRecord
         fields = ['donator', 'contacter', 'location', 'donation_time'] # ['item', 'quantity']
         widgets = {
-            'donation_time': DateInput()
+            'donation_time': DateInput(attrs={'class':'datepicker', 'value': datetime.now().strftime("%Y-%m-%d")})
         }
 
     def __init__(self, foodbank_id, *args, **kwargs):
@@ -100,7 +101,7 @@ class CreateSendForm(ModelForm):
         model = SendRecord
         fields = ['household', 'location', 'record_time']
         widgets = {
-            'record_time': DateInput()
+            'record_time': DateInput(attrs={'class':'datepicker', 'value': datetime.now().strftime("%Y-%m-%d")})
         }
 
     def __init__(self, foodbank_id, *args, **kwargs):

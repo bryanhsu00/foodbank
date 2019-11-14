@@ -244,6 +244,9 @@ def get_items_cate(request): #取得所有的分類跟其對應的商品
             res[d['category_id']] = [{'id':d['id'], 'name':d['name']}]
     return JsonResponse(res)
 
+def get_static_data(request):
+    ReceiveRecord.objects.all().values("")
+
 @login_required
 def get_resource(request, loc_id, cate_id): #取得據點與分類的庫存
     lst = Location.objects.filter(foodbank_id = request.user.foodbank_id)

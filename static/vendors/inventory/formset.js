@@ -32,7 +32,8 @@ function cloneMore(selector, prefix) {
     .removeClass('btn-success').addClass('btn-danger')
     .removeClass('add-form-row').addClass('remove-form-row')
     .val('-');
-    resetAllOption();
+    resetAllOption(total);
+    giveOptions(total);
     return false;
 }
 
@@ -48,7 +49,8 @@ function deleteForm(prefix, btn) {
             });
         }
     }
-    resetAllOption();
+    total--;
+    resetAllOption(total);
     return false;
 }
 
