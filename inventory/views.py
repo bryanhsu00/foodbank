@@ -1,7 +1,7 @@
 from django.db import transaction, connection
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
-from django.db.models import Sum
+from django.db.models import Sum, Count, F
 from django.urls import reverse
 from django.forms import formset_factory
 from django.contrib.auth.decorators import login_required
@@ -244,8 +244,46 @@ def get_items_cate(request): #取得所有的分類跟其對應的商品
             res[d['category_id']] = [{'id':d['id'], 'name':d['name']}]
     return JsonResponse(res)
 
-def get_static_data(request):
-    ReceiveRecord.objects.all().values("")
+@login_required
+def get_statistic_data(request, year, month, day):
+    loc_list = [i.id for i in Location.objects.filter(foodbank_id = request.user.foodbank_id)]
+    models = ['Resource', 'ReceiveRecord', 'SendRecord']
+    result = []
+    for name in models:
+        model = apps.get_model('inventory', name).objects
+        if name == 'ReceiveRecord' or name == 'SendRecord':
+            if year != 0:
+                model = model.filter(date__year = str(year))
+            if month != 0:
+                model = model.filter(date__month = str(month))
+            if day != 0:
+                model = model.filter(date__day = str(day))
+        model = model\
+            .filter(location__in = loc_list)\
+            .values(cname = F('item__category__name'))\
+            .filter(cname__in=[i.name for i in Category.objects.all()])\
+            .annotate(sum = Sum('quantity'))
+        result.append(model)
+
+    final = {}
+    final['label'] = [i['name'] for i in Category.objects.values()]
+
+    for index, name in enumerate(models):
+        final[name] = [0]*len(final['label'])
+        for i in result[index]:
+            final[name][final['label'].index(i['cname'])] = i['sum']
+            
+    rm = []
+    for i in range(len(final['label'])):
+        if(final['Resource'][i] == 0 and final['ReceiveRecord'][i] == 0 and final['SendRecord'][i] == 0):
+            rm.append(i)
+
+    rm.reverse()
+    for i in rm:
+        for k in final:
+            del final[k][i]
+
+    return JsonResponse(final, safe=False)
 
 @login_required
 def get_resource(request, loc_id, cate_id): #取得據點與分類的庫存

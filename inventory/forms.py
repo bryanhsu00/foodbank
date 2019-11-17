@@ -78,9 +78,9 @@ class SendRecordForm(ModelForm):
 class CreateReceiveForm(ModelForm):
     class Meta:
         model = ReceiveRecord
-        fields = ['donator', 'contacter', 'location', 'donation_time'] # ['item', 'quantity']
+        fields = ['donator', 'contacter', 'location', 'date'] # ['item', 'quantity']
         widgets = {
-            'donation_time': DateInput(attrs={'class':'datepicker', 'value': datetime.now().strftime("%Y-%m-%d")})
+            'date': DateInput(attrs={'class':'datepicker', 'value': datetime.now().strftime("%Y-%m-%d")})
         }
 
     def __init__(self, foodbank_id, *args, **kwargs):
@@ -99,9 +99,9 @@ class ItemReceiveForm(forms.Form):
 class CreateSendForm(ModelForm):
     class Meta:
         model = SendRecord
-        fields = ['household', 'location', 'record_time']
+        fields = ['household', 'location', 'date']
         widgets = {
-            'record_time': DateInput(attrs={'class':'datepicker', 'value': datetime.now().strftime("%Y-%m-%d")})
+            'date': DateInput(attrs={'class':'datepicker', 'value': datetime.now().strftime("%Y-%m-%d")})
         }
 
     def __init__(self, foodbank_id, *args, **kwargs):

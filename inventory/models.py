@@ -245,7 +245,7 @@ class ReceiveRecord(Model): #進貨紀錄
         verbose_name='物品名稱'
     )
     quantity = IntegerField(default=1, verbose_name='數量')
-    donation_time = DateField(blank=True, null=True ,verbose_name="捐贈日期")
+    date = DateField(blank=True, null=True ,verbose_name="捐贈日期")
 
     @staticmethod
     def view_fields():
@@ -254,7 +254,7 @@ class ReceiveRecord(Model): #進貨紀錄
     @staticmethod
     def all_fields():
         return ['donator_id', 'contacter_id', 'location_id', 
-        'item_id', 'quantity', 'donation_time']
+        'item_id', 'quantity', 'date']
 
     def __str__(self):
         return '{}, {}, {}, {}'.format(self.donator, 
@@ -284,7 +284,7 @@ class SendRecord(Model): #出貨紀錄
         null=True, 
         verbose_name="領取據點"
     )
-    record_time = DateField(blank=True, null=True, verbose_name="領取日期")
+    date = DateField(blank=True, null=True, verbose_name="領取日期")
     
     @staticmethod
     def view_fields():
@@ -292,7 +292,7 @@ class SendRecord(Model): #出貨紀錄
     
     @staticmethod
     def all_fields():
-        return ['household_id', 'item_id', 'quantity', 'location_id', 'record_time']
+        return ['household_id', 'item_id', 'quantity', 'location_id', 'date']
 
 # class ExpirationRecord(Model): #報廢紀錄
 #     item = ForeignKey(

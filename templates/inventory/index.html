@@ -9,78 +9,82 @@
 
 {% block main %}
 
-<div class="container">
-    <div class="row my-3">
-        <div class="col">
-            <h4>Bootstrap 4 Chart.js - Bar Chart</h4>
-        </div>
-    </div>
-    <div class="row my-2">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-body">
-                    <canvas id="chBar" height="100"></canvas>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+<select name="year" id="year" onchange="call()"></select>年
+<select name="month" id="month" onchange="call()"></select>月
+<select name="day" id="day" onchange="call()"></select>日
+
+<canvas id="record"></canvas>
 
 {% endblock %}
 
 {% block customized_js %}
 <script>
 
-/* chart.js chart examples */
-
-// chart colors
-var colors = ['#007bff','#28a745','#444444','#c3e6cb','#dc3545','#6c757d'];
-
-var chBar = document.getElementById("chBar");
-var chartData = {
-  labels: ["S", "M", "T", "W", "T", "F", "S"],
-  datasets: [{
-    data: [589, 445, 483, 503, 689, 692, 634],
-    backgroundColor: colors[0]
-  },
-  {
-    data: [209, 245, 383, 403, 589, 692, 580],
-    backgroundColor: colors[1]
-  },
-  {
-    data: [489, 135, 483, 290, 189, 603, 600],
-    backgroundColor: colors[2]
-  },
-  {
-    data: [639, 465, 493, 478, 589, 632, 674],
-    backgroundColor: colors[4]
-  }]
-};
-
-if (chBar) {
-  new Chart(chBar, {
-  type: 'bar',
-  data: chartData,
-  options: {
-    scales: {
-      xAxes: [{
-        barPercentage: 0.4,
-        categoryPercentage: 0.5
-      }],
-      yAxes: [{
-        ticks: {
-          beginAtZero: false
+let indexInit = () => {
+    let list = [['year', 2010, 2019], ['month', 1, 12], ['day', 1, 31]]
+    for(let i=0; i<list.length; i++){
+        let parent = document.getElementById(list[i][0]);
+        let child = document.createElement('option');
+        child.text = '---';
+        parent.add(child);
+        for(let j=list[i][1]; j<=list[i][2]; j++){
+            let child = document.createElement('option');
+            child.text = j;
+            parent.add(child);
         }
-      }]
-    },
-    legend: {
-      display: false
     }
-  }
-  });
+    drawChart(0,0,0);
 }
 
+let call = () => {
+    let year = document.getElementById('year').value;
+    let month = document.getElementById('month').value;
+    let day = document.getElementById('day').value;
+    if(year == '---') year = 0;
+    if(month == '---') month = 0;
+    if(day == '---') day = 0;
+    drawChart(year, month, day);
+}
 
+let drawChart = (year, month, day) => {
+    fetch(`/inventory/get_statistic_data/${year}/${month}/${day}`)
+    .then(res => res.json())
+    .then(res => {
+        if(window.bar != undefined){
+            window.bar.destroy();
+        }
+        var ctx = document.getElementById('record').getContext('2d');
+        window.bar = new Chart(ctx, {
+            type: 'horizontalBar',
+            data: {
+                labels: res['label'],
+                datasets: [
+                    {
+                        label: "出貨",
+                        backgroundColor: "red",
+                        data: res['SendRecord']
+                    },
+                    {
+                        label: "進貨",
+                        backgroundColor: "blue",
+                        data: res['ReceiveRecord']
+                    },
+                    {
+                        label: "庫存",
+                        backgroundColor: 'green',
+                        data: res['Resource']
+                    },
+                ]
+            },
+            options: {
+                barValueSpacing: 20,
+                scales: {xAxes: [{ ticks: { min: 0 }}]}
+            }
+        });
+    });
+}
+
+indexInit();
 
 </script>
 {% endblock %}
