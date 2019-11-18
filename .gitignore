@@ -65,7 +65,5 @@ Temporary Items
 __pycache__
 *.pyc
 .vscode
-bin
-include
-lib
 nohup.out
+venv
