@@ -25,8 +25,11 @@ function turnOn(){
 }
 
 function turnOff(){
-    video.srcObject.getTracks()[0].stop();
+    video.srcObject.getTracks().forEach(function(track) {
+        track.stop();
+    });;
     canvasElement.hidden = true;
+    document.getElementById('parent').removeChild(canvasElement);
     document.getElementById('form-area').hidden = false;
 }
 
