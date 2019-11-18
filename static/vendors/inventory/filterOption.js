@@ -24,6 +24,7 @@ let giveOptions = (total) => {
     let item = document.getElementById(`id_form-${total}-item`);
     let arr = getAllElement();
     let content = "";
+    content += `<option value="">----------</option>`;
     for(let i=0; i<arr.length; i++)
         content += `<option value=${arr[i].id}>${arr[i].name}</option>`;
     item.innerHTML = content;

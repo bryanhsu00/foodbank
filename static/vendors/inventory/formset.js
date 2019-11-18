@@ -7,6 +7,7 @@ function updateElementIndex(el, prefix, ndx) {
 }
 
 function cloneMore(selector, prefix) {
+    console.log(selector, prefix);
     var newElement = $(selector).clone(true);
     var total = $('#id_' + prefix + '-TOTAL_FORMS').val();
     newElement.find(':input:not([type=button]):not([type=submit]):not([type=reset])').each(function() {
