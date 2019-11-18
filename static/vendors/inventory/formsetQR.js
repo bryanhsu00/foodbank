@@ -1,6 +1,4 @@
 var video = document.createElement("video");
-var canvasElement = document.getElementById("canvas");
-var canvas = canvasElement.getContext("2d");
 var tmpQRdata = "";
 
 function drawLine(begin, end, color) {
@@ -14,22 +12,28 @@ function drawLine(begin, end, color) {
 
 // Use facingMode: environment to attemt to get the front camera on phones
 function turnOn(){
-    document.getElementById('form-area').hidden = true;
-    navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
-        .then(function(stream) {
-            video.srcObject = stream;
-            video.setAttribute("playsinline", true); // required to tell iOS safari we don't want fullscreen
-            video.play();
-            requestAnimationFrame(tick);
-        });
+    if(typeof canvasElement === "undefined"){
+        document.getElementById('form-area').hidden = true;
+        canvasElement = document.createElement("canvas");
+        document.getElementById("parent").appendChild(canvasElement);
+        canvasElement.setAttribute("id", "canvas");
+        canvas = canvasElement.getContext("2d");
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+            .then(function(stream) {
+                video.srcObject = stream;
+                video.setAttribute("playsinline", true); // required to tell iOS safari we don't want fullscreen
+                video.play();
+                requestAnimationFrame(tick);
+            });
+    }
 }
 
 function turnOff(){
     video.srcObject.getTracks().forEach(function(track) {
         track.stop();
     });;
-    canvasElement.hidden = true;
     document.getElementById('parent').removeChild(canvasElement);
+    canvasElement = undefined;
     document.getElementById('form-area').hidden = false;
 }
 
