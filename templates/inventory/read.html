@@ -53,22 +53,30 @@
                 {% endfor %}
                 </tbody>
             </table>
-            <center>
-                <a href="/inventory/create/{{ model_name }}" class="btn btn-info" role="button">新增</a>
-            </center>
         </div>
 {% endblock %}
 
 {% block customized_js %}
 <script>
 
-$(document).ready(function() {
-    
+let setAddBtn = () => {
+    let model = "{{ model_name }}";
+    let child = document.createElement('a');
+    child.setAttribute('href', `/inventory/create/${model}`);
+    child.setAttribute('class', 'btn btn-info');
+    child.setAttribute('role', "button");
+    child.textContent = "新增";
+    let sibling = document.getElementById('mytable_filter');
+    sibling.insertAdjacentHTML('beforeend', '&nbsp;&nbsp;');
+    sibling.appendChild(child);
+}
+
+$(document).ready(function() {    
     let table = $('#mytable').DataTable({
         "language": lang,
         "order": [],
     });
-    document.getElementById('mytable_paginate');
+    setAddBtn();
 } );
 
 let lang = {
