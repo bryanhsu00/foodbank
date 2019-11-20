@@ -2,29 +2,31 @@ from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.conf import settings
 from django.apps import apps
-import re
+import re, collections
 
 def readable(query_set):
     result = []
-    query_list = list(query_set.values())
-    names = [[i.verbose_name, i.is_relation] for i in query_set.model._meta.fields]
-    for i, q in enumerate(query_list):
-        tmp = {}
-        for index, (key, value) in enumerate(q.items()):
-            field_name = names[index][0]
+    names = [
+                {
+                    "name" : i.name, 
+                    "verbose_name" : i.verbose_name, 
+                    "is_relation" : i.is_relation, 
+                    "choices" : i.choices 
+                } for i in query_set.model._meta.fields
+            ]
+    for q in query_set: # dict 陣列
+        tmp = collections.OrderedDict()
+        for n in names:
+            field_name = n["verbose_name"]
             field_value = None
-            if not names[index][1]: # not fk
-                func = getattr(query_set[i], "get_"+key+"_display", None)
-                if func != None: # is choice
-                    field_value = func()
-                else: # not choice
-                    field_value = value
-            else: # is fk
-                obj = getattr(query_set[i], key[:-3], None)
-                if obj == None:
-                    field_value = None
-                else:
+            if n['is_relation']: # is fk
+                obj = getattr(q, n['name'], None)
+                if obj != None:
                     field_value = obj.name
+            elif n['choices'] != []:
+                field_value = getattr(q, "get_"+n['name']+"_display")()
+            else:
+                field_value = getattr(q, n['name'])
             tmp[field_name] = field_value
         result.append(tmp)
     return result
