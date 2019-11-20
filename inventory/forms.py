@@ -1,4 +1,5 @@
-from .models import *
+from .models import FoodBank, Contacter, Measure,\
+    Donator, Household, Location, Category, Item, ReceiveRecord, SendRecord
 from django.forms import ModelForm ,formset_factory, BaseFormSet
 from django import forms
 from django.core import validators

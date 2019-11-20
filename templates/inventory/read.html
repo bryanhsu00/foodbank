@@ -11,29 +11,28 @@
         width:auto;
         display:inline;
     }
-    table { 
-        table-layout: fixed;
-        word-wrap: break-word;
-    }
     .main .container-fluid {
         padding: 0px 10px 0px 10px;
+    }
+    table {
+        table-layout: fixed;
+        word-wrap: break-word;
     }
 </style>
 
 {% endblock %}
 
 {% block main %}
-        <div class="table-responsive">
             <table class="table table-striped" id="mytable">
                 <thead class="thead-light">
                     <tr>
                     {% for key, value in object_list.0.items %}
-                        {% if key != 'ID' %}    
-                            <th>{{ key }}</th>
+                        {% if key != 'ID' and key != '單位聯絡人' and key != '食物銀行'%}    
+                            <th>{{ key }}<span>&nbsp;&nbsp;&nbsp;&#8597;</span></th>
                         {% endif %}
-                    {% endfor %}
+                    {% endfor %} 
                         <th>
-                            詳細資訊
+                            功能
                         </th>
                     </tr>
                 </thead>
@@ -41,23 +40,37 @@
                 {% for object in object_list %}
                     <tr>
                     {% for key, value in object.items %}
-                        {% if key != 'ID' %}
-                            <td> {{ value }} </td>
+                        {% if key != 'ID' and key != '單位聯絡人' and key != '食物銀行'%}
+                            {% if key == '照片' %}
+                                <td>
+                                    <img src="/media/{{ value }}" 
+                                    width="50" height="50" alt="">
+                                </td>
+                            {% elif key == '捐贈者' and object.單位聯絡人 != None %}
+                                <td> {{ value }}/{{ object.單位聯絡人 }} </td>
+                            {% else %}
+                                <td> {{ value }} </td>
+                            {% endif %}
                         {% endif %}
                     {% endfor %}
                         <td>
-                            <a href="/inventory/detail/{{ model_name }}/{{ object.ID }}" 
-                                class="btn btn-outline-info" role="button">詳細</a>
+                            <a href="/inventory/update/{{ model_name }}/{{ object.ID }}" 
+                                class="btn btn-outline-info" role="button">修改</a>
                         </td>
                     </tr>
                 {% endfor %}
                 </tbody>
             </table>
-        </div>
 {% endblock %}
 
 {% block customized_js %}
 <script>
+
+if(window.mobilecheck()){
+    let style = document.createElement('style');
+    style.innerHTML = "table {display: block; overflow-x: auto; white-space: nowrap;}";
+    document.head.appendChild(style);
+}
 
 let setAddBtn = () => {
     let model = "{{ model_name }}";

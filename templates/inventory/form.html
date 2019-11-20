@@ -28,7 +28,12 @@
       </div>
     {% endfor %}
   
-    <button type="submit" class="btn btn-primary">Submit</button>
+    <button type="submit" class="btn btn-success">提交</button>
+    {% if pk %}
+      <a href="/inventory/delete/{{ model_name }}/{{ pk }}" 
+      class="btn btn-danger" role="button">刪除</a>
+    {% endif %}
+
 </form>
 {% endblock %}
 

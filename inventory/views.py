@@ -7,6 +7,7 @@ from django.forms import formset_factory
 from django.contrib.auth.decorators import login_required
 from .utils import *
 from .forms import *
+from .models import Resource
 import json
 
 class MyException(Exception):
@@ -14,7 +15,6 @@ class MyException(Exception):
 
 @login_required
 def index(request):
-    print(request.user.foodbank_id)
     d = get_base_dict_for_view(["index"])
     l = []
     for i in apps.get_models():
@@ -156,9 +156,8 @@ def read(request, st):
         m = model.objects.filter(location__name__in=[i.name for i in l]).order_by(F('id').desc())
     else:
         m = model.objects.all().order_by(F('id').desc())
-    for i in m:
-        object_list.append(convert(i.__dict__, model, model.view_fields()))
-    context = {'object_list' : object_list,
+
+    context = {'object_list' : readable(m),
                 'model_name': st}
     context.update(get_base_dict_for_view([st]))
     return render(request, template, context)
@@ -189,21 +188,8 @@ def update(request, st, pk):
         form = eval(st + 'Form')(request.POST or None, instance=obj)
     if form.is_valid():
         form.save()
-        return HttpResponseRedirect(reverse('detail', args=[st, pk]))
-    context = {'form': form, 'model_name': st}
-    context.update(get_base_dict_for_view([st]))
-    return render(request, template, context)
-
-@login_required
-def detail(request, st, pk):
-    template = 'inventory/detail.html'
-    model = apps.get_model('inventory', st)
-    obj = get_object_or_404(apps.get_model('inventory', st), pk=pk)
-    context = {
-                'pk': pk, 
-                'model_name': st, 
-                'obj': convert(obj.__dict__, model, model.all_fields())
-            }
+        return HttpResponseRedirect(reverse('read', args=[st]))
+    context = {'form': form, 'model_name': st, 'pk': pk}
     context.update(get_base_dict_for_view([st]))
     return render(request, template, context)
 
@@ -218,11 +204,7 @@ def delete(request, st, pk):
     context.update(get_base_dict_for_view([st]))
     return render(request, template, context)
 
-@login_required
-def QRcodeScanner(request):
-    template = "inventory/QRcodeScanner.html"
-    return render(request, template, {})
-
+### api
 @login_required
 def api(request, st):
     model = apps.get_model('inventory', st)

@@ -3,19 +3,30 @@ from django.shortcuts import get_object_or_404, render
 from django.conf import settings
 from django.apps import apps
 import re
-import collections
 
-def convert(dic, model, fields):
-    result = collections.OrderedDict()
-    fields.insert(0, 'id')
-    for key in fields:
-        new_key = model._meta.get_field(key).verbose_name
-        match = re.search(r'^(.*)_id$', key)
-        if match and dic[key] != None:
-            result[new_key] = apps.get_model('inventory', 
-                match.group(1).capitalize()).objects.get(pk = dic[key]).__str__()
-        else:
-            result[new_key] = dic[key]
+def readable(query_set):
+    result = []
+    query_list = list(query_set.values())
+    names = [[i.verbose_name, i.is_relation] for i in query_set.model._meta.fields]
+    for i, q in enumerate(query_list):
+        tmp = {}
+        for index, (key, value) in enumerate(q.items()):
+            field_name = names[index][0]
+            field_value = None
+            if not names[index][1]: # not fk
+                func = getattr(query_set[i], "get_"+key+"_display", None)
+                if func != None: # is choice
+                    field_value = func()
+                else: # not choice
+                    field_value = value
+            else: # is fk
+                obj = getattr(query_set[i], key[:-3], None)
+                if obj == None:
+                    field_value = None
+                else:
+                    field_value = obj.name
+            tmp[field_name] = field_value
+        result.append(tmp)
     return result
 
 def get_extend_breadcrumb_items(items_array):
