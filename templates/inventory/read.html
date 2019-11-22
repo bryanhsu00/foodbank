@@ -5,7 +5,6 @@
 {% endblock %}
 
 {% block customized_css %}
-
 <style type="text/css">
     .form-control{
         width:auto;
@@ -19,48 +18,47 @@
         word-wrap: break-word;
     }
 </style>
-
 {% endblock %}
 
 {% block main %}
-            <table class="table table-striped" id="mytable">
-                <thead class="thead-light">
-                    <tr>
-                    {% for key, value in object_list.0.items %}
-                        {% if key != 'ID' and key != '單位聯絡人' and key != '食物銀行'%}    
-                            <th>{{ key }}<span>&nbsp;&nbsp;&nbsp;&#8597;</span></th>
-                        {% endif %}
-                    {% endfor %} 
-                        <th>
-                            功能
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                {% for object in object_list %}
-                    <tr>
-                    {% for key, value in object.items %}
-                        {% if key != 'ID' and key != '單位聯絡人' and key != '食物銀行'%}
-                            {% if key == '照片' %}
-                                <td>
-                                    <img src="/media/{{ value }}" 
-                                    width="50" height="50" alt="">
-                                </td>
-                            {% elif key == '捐贈者' and object.單位聯絡人 != None %}
-                                <td> {{ value }}/{{ object.單位聯絡人 }} </td>
-                            {% else %}
-                                <td> {{ value }} </td>
-                            {% endif %}
-                        {% endif %}
-                    {% endfor %}
-                        <td>
-                            <a href="/inventory/update/{{ model_name }}/{{ object.ID }}" 
-                                class="btn btn-outline-info" role="button">修改</a>
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+<table class="table table-striped" id="mytable">
+    <thead class="thead-light">
+        <tr>
+        {% for key, value in object_list.0.items %}
+            {% if key != 'ID' and key != '單位聯絡人' and key != '食物銀行'%}    
+                <th>{{ key }}<span>&nbsp;&nbsp;&nbsp;&#8597;</span></th>
+            {% endif %}
+        {% endfor %} 
+            <th>
+                功能
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for object in object_list %}
+        <tr>
+        {% for key, value in object.items %}
+            {% if key != 'ID' and key != '單位聯絡人' and key != '食物銀行'%}
+                {% if key == '照片' %}
+                    <td>
+                        <img src="/media/{{ value }}" 
+                        width="50" height="50" alt="">
+                    </td>
+                {% elif key == '捐贈者' and object.單位聯絡人 != None %}
+                    <td> {{ value }}/{{ object.單位聯絡人 }} </td>
+                {% else %}
+                    <td> {{ value }} </td>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+            <td>
+                <a href="/inventory/update/{{ model_name }}/{{ object.ID }}" 
+                    class="btn btn-outline-info" role="button">修改</a>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
 {% endblock %}
 
 {% block customized_js %}

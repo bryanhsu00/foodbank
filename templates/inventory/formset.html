@@ -45,24 +45,25 @@ input[type=number]{
     <br><br>
     {{ formset.management_form }}
     {% for form in formset %}
-    <div id="formset-{{ forloop.counter0 }}"
-         class="form-row">
-        {% for field in form.visible_fields %}
-            <div class="form-group">
-                {{ field.label_tag }}
-                {% render_field field class="form-control" %}
-                {% if field.help_text %}
-                <small class="form-text text-muted">{{ field.help_text }}</small>
-                {% endif %}
-                {% for error in field.errors %}
-                <p style="color: red">{{ error }}</p>
-                {% endfor %}
-            </div>
-        {% endfor %}
-        <div class="form-group">
-            <label for="">&nbsp;</label>
-            <input class="form-control btn btn-success add-form-row" type="button" value="+">
-        </div>
+    <div id="formset-{{ forloop.counter0 }}" class="form-row">
+        <!-- <div class="card-body"> -->
+                    {% for field in form.visible_fields %}
+                        <div class="form-group">
+                            {{ field.label_tag }}
+                            {% render_field field class="form-control" %}
+                            {% if field.help_text %}
+                                <small class="form-text text-muted">{{ field.help_text }}</small>
+                            {% endif %}
+                            {% for error in field.errors %}
+                                <p style="color: red">{{ error }}</p>
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                    <div class="form-group">
+                        <label for="">&nbsp;</label>
+                        <input class="form-control btn btn-success add-form-row" type="button" value="+">
+                    </div>
+        <!-- </div> -->
     </div>
     {% endfor %}
 

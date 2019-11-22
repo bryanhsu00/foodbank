@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 from .utils import *
 from .forms import *
 from .models import Resource
+from datetime import datetime
 import json
 
 class MyException(Exception):
@@ -15,13 +16,9 @@ class MyException(Exception):
 
 @login_required
 def index(request):
-    d = get_base_dict_for_view(["index"])
-    l = []
-    for i in apps.get_models():
-        if i._meta.app_label == 'inventory':
-            l.append(i._meta.object_name)
-    d['model_list'] = l
-    return render(request, 'inventory/index.html', d)
+    context = get_base_dict_for_view(["index"])
+    context.update({"username" : request.user.username})
+    return render(request, 'inventory/index.html', context)
 
 @login_required
 def read_resource(request):
@@ -254,7 +251,7 @@ def get_statistic_data(request, year, month, day):
         final[name] = [0]*len(final['label'])
         for i in result[index]:
             final[name][final['label'].index(i['cname'])] = i['sum']
-            
+
     rm = []
     for i in range(len(final['label'])):
         if(final['Resource'][i] == 0 and final['ReceiveRecord'][i] == 0 and final['SendRecord'][i] == 0):
@@ -266,6 +263,13 @@ def get_statistic_data(request, year, month, day):
             del final[k][i]
 
     return JsonResponse(final, safe=False)
+
+@login_required
+def get_expired(request, date):
+    exp_date = datetime.strptime(date, '%Y-%m-%d').date()
+    loc_list = [i.id for i in Location.objects.filter(foodbank_id = request.user.foodbank_id)]
+    result = Resource.objects.filter(location__in = loc_list).filter(expiration_date__lte=(exp_date)).order_by('expiration_date')
+    return JsonResponse(readable(result), safe=False)
 
 @login_required
 def get_resource(request, loc_id, cate_id): #取得據點與分類的庫存

@@ -5,119 +5,96 @@
 {% endblock %}
 
 {% block customized_css %}
+<style type="text/css">
+    .form-control{
+        width:auto;
+        display:inline;
+    }
+    .main .container-fluid {
+        padding: 0px 10px 0px 10px;
+    }
+    table {
+        table-layout: fixed;
+        word-wrap: break-word;
+    }
+</style>
 {% endblock %}
 
 {% block main %}
-
 <div class="container">
     <div class="row">
-        hello, world!
+        <div class="col">
+            <div class="card">
+                <div class="card-header">提示訊息</div>
+                <div class="card-body">
+                    你好 {{username}}！
+                </div>
+            </div>
+        </div>
     </div>
     <div class="row">
-        <select name="year" id="year" onchange="call()"></select>年
-        <select name="month" id="month" onchange="call()"></select>月
-        <select name="day" id="day" onchange="call()"></select>日
+        <div class="col">
+            <div class="card">
+                <div class="card-header">長條圖</div>
+                <div class="card-body">
+
+                    <select class="custom-select 
+                    custom-select-sm form-control 
+                    form-control-sm" name="year" 
+                    id="year" onchange="call()">
+                    </select>年
+
+                    <select class="custom-select 
+                    custom-select-sm form-control 
+                    form-control-sm" name="month" 
+                    id="month" onchange="call()">
+                    </select>月
+
+                    <select class="custom-select 
+                    custom-select-sm form-control 
+                    form-control-sm" name="day" 
+                    id="day" onchange="call()">
+                    </select>日
+                    
+                    <canvas id="record"></canvas>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="row">
-        <canvas id="record"></canvas>
+        <div class="col">
+            <div class="card">
+                <div class="card-header">即將過期</div>
+                <div class="card-body"> 
+                    <label for="">
+                    有效日期 <input type="date" class="form-control" onchange="dateHandler(event);">
+                    </label>
+                    <table class="table table-striped">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>物品名稱</th>
+                                <th>數量</th>
+                                <th>有效日期</th>
+                                <th>據點</th>
+                            </tr>
+                        </thead>                    
+                        <tbody id="expBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}
 
 {% block customized_js %}
+<script src="{% static 'vendors/inventory/index.js' %}"></script>
 <script>
-
-let indexInit = () => {
-    let list = [['year', 2010, 2019], ['month', 1, 12], ['day', 1, 31]]
-    for(let i=0; i<list.length; i++){
-        let parent = document.getElementById(list[i][0]);
-        let child = document.createElement('option');
-        child.text = '---';
-        parent.add(child);
-        for(let j=list[i][1]; j<=list[i][2]; j++){
-            let child = document.createElement('option');
-            child.text = j;
-            parent.add(child);
-        }
-    }
-    drawChart(0,0,0);
+if(window.mobilecheck()){
+    let style = document.createElement('style');
+    style.innerHTML = "table {display: block; overflow-x: auto; white-space: nowrap;}";
+    document.head.appendChild(style);
 }
-
-let call = () => {
-    let year = document.getElementById('year').value;
-    let month = document.getElementById('month').value;
-    let day = document.getElementById('day').value;
-    if(year == '---') year = 0;
-    if(month == '---') month = 0;
-    if(day == '---') day = 0;
-    drawChart(year, month, day);
-}
-
-let drawChart = (year, month, day) => {
-    fetch(`/inventory/get_statistic_data/${year}/${month}/${day}`)
-    .then(res => res.json())
-    .then(res => {
-        let aspect = 2;
-        if(window.bar !== undefined)
-            window.bar.destroy();
-        if(window.mobilecheck())
-            aspect = 1;
-        var ctx = document.getElementById('record').getContext('2d');
-        window.bar = new Chart(ctx, {
-            type: 'horizontalBar',
-            backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(255, 159, 64, 0.2)'
-            ],
-            borderColor: [
-                'rgba(255,99,132,1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)'
-            ],
-            
-            data: {
-                labels: res['label'],
-                datasets: [
-                    {
-                        label: "出貨",
-                        backgroundColor: "rgba(255, 99, 132, 0.2)",
-                        borderColor: 'rgba(255,99,132,1)',
-                        data: res['SendRecord'],
-                        borderWidth: 1,
-                    },
-                    {
-                        label: "進貨",
-                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                        data: res['ReceiveRecord'],
-                        borderWidth: 1,
-                    },
-                    {
-                        label: "庫存",
-                        backgroundColor: 'rgba(255, 206, 86, 0.2)',
-                        borderColor: 'rgba(255, 206, 86, 1)',
-                        data: res['Resource'],
-                        borderWidth: 1,
-                    },
-                ]
-            },
-            options: {
-                aspectRatio: aspect,
-                barValueSpacing: 20,
-                scales: {xAxes: [{ ticks: { min: 0 }}]}
-            }
-        });
-    });
-}
-
-indexInit();
-
 </script>
 {% endblock %}

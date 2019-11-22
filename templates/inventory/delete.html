@@ -11,8 +11,8 @@
 
 <form method="post">
     {% csrf_token %}
-    Are you sure you want to delete "{{ object }}" ?<br/>
-    <input type="submit" value="Delete" />
+    你確定要刪除 "{{ object }}" 嗎?<br/><br/>
+    <input class="btn btn-danger" type="submit" value="刪除" />
 </form>
 
 {% endblock %}
