@@ -1,0 +1,27 @@
+h3 {
+    font-size: 400%;
+    color:#FFF;
+}
+strong {
+    font-size: 120%;
+    color:#FFF;
+}
+h2 {
+    opacity:0;
+}
+.btn-primary{
+  background-color: transparent;
+  border-color: #ccc;
+}
+
+#but1{
+    background-color: transparent;
+    border-color: #ccc;
+    border:none;
+}
+.btn.btn-primary:active,
+.btn.btn-primary:hover,
+.btn-primary:focus{
+    background-color: white;
+    color:black;
+}
