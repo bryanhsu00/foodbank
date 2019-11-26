@@ -54,10 +54,6 @@ let resetAllOption = (total) => { // formset中的form數量若有更動所有ev
 }
 
 let initRecord = () => {
-    document.getElementById("id_form-0-category")
-    .addEventListener("change", () => {
-        changeOption("id_form-0"); 
-    });
     let path = new URL(window.location.href).pathname.split("/")[3];
     let model;
     if(path === 'ReceiveRecord')
@@ -93,4 +89,21 @@ let initRecord = () => {
         .catch(err => { throw err });
 }
 
+let initDate = () => {
+    let dateInput = document.querySelector('input[type=date]');
+    let today = new Date();
+    today.setMonth(today.getMonth());
+    let dateStr = today.toLocaleDateString().replace("/","-").replace("/","-");
+    dateInput.value = dateStr;
+}
+
+let initOption = () => {
+    document.getElementById("id_form-0-category")
+    .addEventListener("change", () => {
+        changeOption("id_form-0"); 
+    });
+}
+
+initOption();
+initDate();
 initRecord();

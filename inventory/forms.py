@@ -2,8 +2,8 @@ from .models import FoodBank, Contacter, Measure,\
     Donator, Household, Location, Category, Item, ReceiveRecord, SendRecord
 from django.forms import ModelForm ,formset_factory, BaseFormSet
 from django import forms
+from django.forms import DateField
 from django.core import validators
-from datetime import datetime
 
 class DateInput(forms.DateInput):
     input_type = 'date'
@@ -17,9 +17,7 @@ class DonatorForm(ModelForm):
     class Meta:
         model = Donator
         fields = '__all__'
-        widgets = {
-            'foodbank': forms.HiddenInput()
-        }
+        widgets = { 'foodbank': forms.HiddenInput() }
 
 class ContacterForm(ModelForm):
     class Meta:
@@ -31,8 +29,8 @@ class HouseholdForm(ModelForm):
         model = Household
         fields = '__all__'
         widgets = {
-            'start_date': DateInput(attrs={'class':'datepicker', 'value': datetime.now().strftime("%Y-%m-%d")}),
-            'end_date': DateInput(attrs={'class':'datepicker', 'value': datetime.now().strftime("%Y-%m-%d")}),
+            'start_date': DateInput(),
+            'end_date': DateInput(),
             'foodbank': forms.HiddenInput()
         }
 
@@ -40,9 +38,7 @@ class LocationForm(ModelForm):
     class Meta:
         model = Location
         fields = '__all__'
-        widgets = {
-            'foodbank': forms.HiddenInput()
-        }
+        widgets = { 'foodbank': forms.HiddenInput() }
 
 class CategoryForm(ModelForm):
     class Meta:
@@ -68,21 +64,21 @@ class ReceiveRecordForm(ModelForm):
     class Meta:
         model = ReceiveRecord
         fields = '__all__'
+        widgets = { 'date': DateInput() }
 
 class SendRecordForm(ModelForm):
     class Meta:
         model = SendRecord
         fields = '__all__'
+        widgets = { 'date': DateInput() }
 
 ###
 
 class CreateReceiveForm(ModelForm):
     class Meta:
         model = ReceiveRecord
-        fields = ['donator', 'contacter', 'location', 'date'] # ['item', 'quantity']
-        widgets = {
-            'date': DateInput(attrs={'class':'datepicker', 'value': datetime.now().strftime("%Y-%m-%d")})
-        }
+        fields = ['donator', 'contacter', 'location', 'date']
+        widgets = { 'date': DateInput() }
 
     def __init__(self, foodbank_id, *args, **kwargs):
         super(CreateReceiveForm, self).__init__(*args, **kwargs)
@@ -101,9 +97,7 @@ class CreateSendForm(ModelForm):
     class Meta:
         model = SendRecord
         fields = ['household', 'location', 'date']
-        widgets = {
-            'date': DateInput(attrs={'class':'datepicker', 'value': datetime.now().strftime("%Y-%m-%d")})
-        }
+        widgets = { 'date': DateInput() }
 
     def __init__(self, foodbank_id, *args, **kwargs):
         super(CreateSendForm, self).__init__(*args, **kwargs)
