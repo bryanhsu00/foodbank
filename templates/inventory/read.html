@@ -25,7 +25,7 @@
     <thead class="thead-light">
         <tr>
         {% for key, value in object_list.0.items %}
-            {% if key != 'ID' and key != '單位聯絡人' and key != '食物銀行'%}    
+            {% if key != 'ID' and key != '單位聯絡人' and key != '食物銀行' and key != 'measure'%}    
                 <th>{{ key }}<span>&nbsp;&nbsp;&nbsp;&#8597;</span></th>
             {% endif %}
         {% endfor %} 
@@ -38,7 +38,7 @@
     {% for object in object_list %}
         <tr>
         {% for key, value in object.items %}
-            {% if key != 'ID' and key != '單位聯絡人' and key != '食物銀行'%}
+            {% if key != 'ID' and key != '單位聯絡人' and key != '食物銀行' and key != 'measure'%}
                 {% if key == '照片' %}
                     <td>
                         <img src="/media/{{ value }}" 
@@ -46,6 +46,8 @@
                     </td>
                 {% elif key == '捐贈者' and object.單位聯絡人 != None %}
                     <td> {{ value }}/{{ object.單位聯絡人 }} </td>
+                {% elif key == '數量' and object.measure != None %}
+                    <td> {{ value }} {{ object.measure }} </td>
                 {% else %}
                     <td> {{ value }} </td>
                 {% endif %}

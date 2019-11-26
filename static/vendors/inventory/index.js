@@ -111,11 +111,13 @@ function dateHandler(e){
     fetch(`/inventory/get_expired/${date}`)
         .then(res => res.json())
         .then(res => {
-            // console.log(res);
             res.forEach(element => {
                 tbl += "<tr>"
                 keys.forEach(key => {
-                    tbl += `<td>${element[key]}</td>`
+                    if(key === "數量")
+                        tbl += `<td>${element[key]} ${element["measure"]}</td>`
+                    else
+                        tbl += `<td>${element[key]}</td>`
                 });
                 tbl += "</tr>"
             });

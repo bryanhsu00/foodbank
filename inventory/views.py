@@ -1,7 +1,7 @@
 from django.db import transaction, connection
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
-from django.db.models import Sum, Count, F
+from django.db.models import Sum, Count, F, Min
 from django.urls import reverse
 from django.forms import formset_factory
 from django.contrib.auth.decorators import login_required
@@ -240,8 +240,8 @@ def get_statistic_data(request, year, month, day):
         model = model\
             .filter(location__in = loc_list)\
             .values(cname = F('item__category__name'))\
-            .filter(cname__in=[i.name for i in Category.objects.all()])\
             .annotate(sum = Sum('quantity'))
+
         result.append(model)
 
     final = {}
@@ -268,44 +268,30 @@ def get_statistic_data(request, year, month, day):
 def get_expired(request, date):
     exp_date = datetime.strptime(date, '%Y-%m-%d').date()
     loc_list = [i.id for i in Location.objects.filter(foodbank_id = request.user.foodbank_id)]
-    result = Resource.objects.filter(location__in = loc_list).filter(expiration_date__lte=(exp_date)).order_by('expiration_date')
-    return JsonResponse(readable(result), safe=False)
+    result = Resource.objects.filter(location__in = loc_list)\
+                             .filter(expiration_date__lte=(exp_date))\
+                             .order_by('expiration_date')
+    return JsonResponse(readable(result, flag=True), safe=False)
 
 @login_required
-def get_resource(request, loc_id, cate_id): #取得據點與分類的庫存
-    lst = Location.objects.filter(foodbank_id = request.user.foodbank_id)
-    strLst = str([i.id for i in lst]).replace('[','(').replace(']',')')
+def get_resource(request, loc, cate): #取得據點與分類的庫存
+    loc_list = [i.id for i in Location.objects.filter(foodbank_id = request.user.foodbank_id)]
+    r = Resource.objects.all().filter(location__in = loc_list)
+    if loc != "None": r = r.filter(location = int(loc))
+    if cate != "None": r = r.filter(item__category = int(cate))
 
-    sql1 = '''
-        select {}resource.*, {}category.name, {}category.id as cid, \
-        sum({}resource.quantity) as rsum, {}item.name as iname,\
-        min({}resource.expiration_date) as rdate \
-        from {}resource, {}category, {}item \
-        where {}resource.item_id = {}item.id and \
-        {}item.category_id = {}category.id and \
-        {}resource.location_id in {} \
-        '''.format(*['inventory_']*14, strLst)
+    r = r.values('item').annotate(
+                            rsum = Sum('quantity'), 
+                            iname = F('item__name'), 
+                            rdate = Min('expiration_date'), 
+                            measure = F('item__measure__name')
+                        )
+    result = []
+    for i in r:
+        result.append({
+            'rsum':  str(i['rsum']) + " " + i['measure'],
+            'iname': i['iname'],
+            'rdate': i['rdate']
+        })
 
-    sql2 = ""
-    if loc_id != "None":
-        sql2 += "and {}resource.location_id = {} ".format('inventory_', loc_id)
-    if cate_id != "None":
-        sql2 += "and {}category.id = {} ".format('inventory_', cate_id)
-
-    sql3 = "group by {}resource.item_id order by {}resource.id desc".format('inventory_', 'inventory_')
-
-    sql = sql1 + sql2 + sql3
-    c = connection.cursor()
-    res = c.execute(sql)
-    descibe = []
-    dict_list = []
-    for i in res.description:
-        descibe.append(i[0])
-    for i in res.fetchall():
-        d = {}
-        for index, content in enumerate(i):
-            d[descibe[index]] = content
-        dict_list.append(d)
-    
-    return JsonResponse({"data":dict_list}, safe=False)
-
+    return JsonResponse({"data" : result}, safe=False)

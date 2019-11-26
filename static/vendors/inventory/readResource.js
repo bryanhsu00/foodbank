@@ -29,7 +29,6 @@ let loadData = () => {
     if(location === "") location = "None";
     if(cate === "") cate = "None";
     let url = `/inventory/get_resource/${location}/${cate}`
-    // console.log(url);
     fetch(url)
         .then(res => res.json())
         .then(res => {

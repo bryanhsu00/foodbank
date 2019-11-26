@@ -3,8 +3,9 @@ from django.shortcuts import get_object_or_404, render
 from django.conf import settings
 from django.apps import apps
 import re, collections
+from django.db.models import F
 
-def readable(query_set):
+def readable(query_set, flag=None):
     result = []
     names = [
                 {
@@ -29,6 +30,14 @@ def readable(query_set):
                 field_value = getattr(q, n['name'])
             tmp[field_name] = field_value
         result.append(tmp)
+
+    model_name = query_set.model.__name__
+    if model_name in ['ReceiveRecord', 'SendRecord'] or flag == True:
+        for q, r in zip(query_set
+                        .annotate(measure=F('item__measure__name'))
+                        .values("measure"), 
+                        result):
+            r.update(q)
     return result
 
 def get_extend_breadcrumb_items(items_array):

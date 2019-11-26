@@ -4,7 +4,7 @@ from .views import *
 urlpatterns = [
     path('', index, name='index'),
     path('api/<str:st>', api, name="api"),
-    path('get_resource/<str:loc_id>/<str:cate_id>', get_resource, name="get_resource"),
+    path('get_resource/<str:loc>/<str:cate>', get_resource, name="get_resource"),
     path('get_items_cate/', get_items_cate, name="get_items_cate"),
     path('get_statistic_data/<int:year>/<int:month>/<int:day>', get_statistic_data, name="get_statistic_data"),
     path('get_expired/<str:date>', get_expired, name="get_expired"),
