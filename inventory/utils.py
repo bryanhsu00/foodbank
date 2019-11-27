@@ -156,11 +156,11 @@ def get_side_nav():
                             "link" : settings.INVENTORY_ROOT+"read/Location",
                             "icon" : "house",  
                         },
-                        {
-                            "title" : "食物銀行",
-                            "link" : settings.INVENTORY_ROOT+"read/Foodbank",
-                            "icon" : "house", 
-                        }
+                        # {
+                        #     "title" : "食物銀行",
+                        #     "link" : settings.INVENTORY_ROOT+"read/Foodbank",
+                        #     "icon" : "house", 
+                        # }
                     ]
                 },
             ]
