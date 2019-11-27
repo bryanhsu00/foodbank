@@ -5,6 +5,13 @@ from django.apps import apps
 import re, collections
 from django.db.models import F
 
+english_name = {
+    "食物銀行":"read/Foodbank", "捐贈者":"read/Donator", "單位聯絡人":"read/Contacter", 
+    "關懷戶":"read/Household", "據點":"read/Location", "物品分類":"read/Category", 
+    "衡量單位":"read/Measure", "物品":"read/Item", "庫存":"read/Resource", 
+    "進貨紀錄":"read/ReceiveRecord", "出貨紀錄":"read/SendRecord"
+    }
+
 def readable(query_set, flag=None):
     result = []
     names = [
@@ -45,13 +52,13 @@ def get_extend_breadcrumb_items(items_array):
     for i in range(len(items_array)):
         tmp_string = ""
         for j in range(i+1):
-            tmp_string += "/"+items_array[j]
+            tmp_string += items_array[j]
         extend_breadcrumb_items.append({
             "title" : items_array[i],
-            "link" : settings.INVENTORY_ROOT+tmp_string,
+            "link" : settings.INVENTORY_ROOT + english_name[tmp_string],
             "isActive" : False,
         })
-    extend_breadcrumb_items[-1]["isActive"] = True
+    # extend_breadcrumb_items[-1]["isActive"] = True
     return extend_breadcrumb_items
 
 ### 設定一次，全部通用
@@ -170,8 +177,8 @@ def get_side_nav():
 def get_base_dict_for_view(extend_breadcrumb_items_array):
     extend_breadcrumb_items = get_extend_breadcrumb_items(extend_breadcrumb_items_array)
     dict_for_view = {
-        "PROJECT_NAME" : settings.PROJECT_NAME,
-        # "PROJECT_NAME" : "甘霖食物銀行",
+        # "PROJECT_NAME" : settings.PROJECT_NAME,
+        "PROJECT_NAME" : "食物銀行",
         "INVENTORY_ROOT" : settings.INVENTORY_ROOT,
         "extend_breadcrumb_items" : extend_breadcrumb_items,
         "breadcrumb_menu" : get_breadcrumb_menu(),

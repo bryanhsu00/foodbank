@@ -11,12 +11,19 @@ from .models import Resource
 from datetime import datetime
 import json
 
+chinese_name = {
+    "Foodbank":"食物銀行", "Donator":"捐贈者", "Contacter":"單位聯絡人", 
+    "Household":"關懷戶", "Location":"據點", "Category":"物品分類", 
+    "Measure":"衡量單位", "Item":"物品", "Resource":"庫存", 
+    "ReceiveRecord":"進貨紀錄", "SendRecord":"出貨紀錄"
+    }
+
 class MyException(Exception):
     pass
 
 @login_required
 def index(request):
-    context = get_base_dict_for_view(["index"])
+    context = get_base_dict_for_view([])
     context.update({"username" : request.user.username})
     return render(request, 'inventory/index.html', context)
 
@@ -25,7 +32,7 @@ def read_resource(request):
     template = 'inventory/readResource.html'
     st = 'Resource'
     context = {'model_name': st}
-    context.update(get_base_dict_for_view([st]))
+    context.update(get_base_dict_for_view([chinese_name[st]]))
     return render(request, template, context)
 
 @login_required
@@ -79,7 +86,7 @@ def create_receive_record(request):
     context = {'form': form, 'formset': formset, 'model_name': 'ReceiveRecord'}
     if request.method == 'POST':
         context.update({'name': name})
-    context.update(get_base_dict_for_view(['ReceiveRecord']))
+    context.update(get_base_dict_for_view([chinese_name['ReceiveRecord']]))
     return render(request, template, context)
 
 @login_required
@@ -137,7 +144,7 @@ def create_send_record(request):
     context = {'form': form, 'formset': formset, 'model_name': 'SendRecord'}
     if request.method == 'POST':
         context.update({'name': name})
-    context.update(get_base_dict_for_view(['SendRecord']))
+    context.update(get_base_dict_for_view([chinese_name['SendRecord']]))
     return render(request, template, context)
 
 @login_required
@@ -156,7 +163,7 @@ def read(request, st):
 
     context = {'object_list' : readable(m),
                 'model_name': st}
-    context.update(get_base_dict_for_view([st]))
+    context.update(get_base_dict_for_view([chinese_name[st]]))
     return render(request, template, context)
 
 @login_required
@@ -172,7 +179,7 @@ def create(request, st):
         instance.save()
         return HttpResponseRedirect(reverse('read', args=[st]))
     context = {'form': form, 'model_name': st}
-    context.update(get_base_dict_for_view([st]))
+    context.update(get_base_dict_for_view([chinese_name[st]]))
     return render(request, template, context)
 
 @login_required
@@ -187,7 +194,7 @@ def update(request, st, pk):
         form.save()
         return HttpResponseRedirect(reverse('read', args=[st]))
     context = {'form': form, 'model_name': st, 'pk': pk}
-    context.update(get_base_dict_for_view([st]))
+    context.update(get_base_dict_for_view([chinese_name[st]]))
     return render(request, template, context)
 
 @login_required
@@ -198,7 +205,7 @@ def delete(request, st, pk):
         obj.delete()
         return HttpResponseRedirect(reverse('read', args=[st]))
     context = {'object': obj }
-    context.update(get_base_dict_for_view([st]))
+    context.update(get_base_dict_for_view([chinese_name[st]]))
     return render(request, template, context)
 
 ### api
