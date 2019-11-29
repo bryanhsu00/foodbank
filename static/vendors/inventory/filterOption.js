@@ -90,11 +90,18 @@ let initRecord = () => {
 }
 
 let initDate = () => {
-    let dateInput = document.querySelector('input[type=date]');
-    let today = new Date();
-    today.setMonth(today.getMonth());
-    let dateStr = today.toLocaleDateString().replace("/","-").replace("/","-");
-    dateInput.value = dateStr;
+    let dateInput = document.querySelectorAll('input[type=date]');
+    dateInput.forEach(element => {
+        if(element.getAttribute("value") == null || element.getAttribute("value") == ""){
+            let today = new Date();
+            today.setMonth(today.getMonth());
+            let dateStr = today.toLocaleDateString().replace("/","-").replace("/","-");
+            element.setAttribute("value", dateStr);
+        }
+        else{
+            element.setAttribute("value", element.getAttribute("value").replace("/","-").replace("/","-"));
+        }
+    });
 }
 
 let initOption = () => {

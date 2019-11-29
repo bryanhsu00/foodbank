@@ -16,7 +16,7 @@ chinese_name = {
     "Household":"關懷戶", "Location":"據點", "Category":"物品分類", 
     "Measure":"衡量單位", "Item":"物品", "Resource":"庫存", 
     "ReceiveRecord":"進貨紀錄", "SendRecord":"出貨紀錄"
-    }
+}
 
 class MyException(Exception):
     pass
@@ -29,128 +29,108 @@ def index(request):
 
 @login_required
 def read_resource(request):
-    template = 'inventory/readResource.html'
     st = 'Resource'
     context = {'model_name': st}
     context.update(get_base_dict_for_view([chinese_name[st]]))
-    return render(request, template, context)
+    return render(request, 'inventory/readResource.html', context)
+
+@login_required
+def update_resource(request):
+    pass
 
 @login_required
 def create_receive_record(request):
-    ItemFormset = formset_factory(ItemReceiveForm, extra=1)
-    template = 'inventory/formset.html'
-    name = None 
+    ItemFormset = formset_factory(ItemReceiveForm, extra=1, formset=ItemReceiveFormSet)
+
     if request.method == 'GET':
         form = CreateReceiveForm(int(request.user.foodbank_id), request.GET or None)
         formset = ItemFormset()
-        
+
     elif request.method == 'POST':
         r = request.POST.copy()
-        name = r['donator'] # 取得input值
 
-        try:
-            r['donator'] = Donator.objects.get(name = r['donator']).id # 把值轉成id
-        except:
-            pass
+        try: r['donator'] = Donator.objects.get(name = r['donator']).id # 把值轉成id
+        except: pass
 
         form = CreateReceiveForm(int(request.user.foodbank_id), r)
         formset = ItemFormset(r)
-        try:
-            if form.is_valid() and formset.is_valid():
-                ### 檢查開始
-                for i, f in enumerate(formset):
-                    idata = f.cleaned_data
-                    if 'item' not in idata:
-                        formset[i].errors['item'] = ['這個欄位是必須的']
-                        raise MyException("no this kind of choice")
-                ### 檢查結束
-                pdata = form.cleaned_data # person data
-                for f in formset:
-                    idata = f.cleaned_data # item data
-                    idata.pop('category', None) # quantity, item, expire
-                    r = Resource.objects.filter(
-                                                item=idata['item'], 
-                                                location=pdata['location'], 
-                                                expiration_date=idata['expiration_date']
-                                            )
-                    if r.count() == 0:
-                        Resource.objects.create(**idata, location=pdata['location'])
-                    else:
-                        q = r[0].quantity
-                        r.update(quantity = q + idata['quantity']) # update all element in queryset
-                    idata.pop('expiration_date', None)
-                    ReceiveRecord.objects.create(**pdata, **idata)
-                return HttpResponseRedirect(reverse('read', args=['ReceiveRecord']))
-        except MyException:
-            pass
+
+        if form.is_valid() and formset.is_valid():
+            pdata = form.cleaned_data # person data
+            for f in formset:
+                idata = f.cleaned_data # item data
+                idata.pop('category', None) # quantity, item, expire
+                r = Resource.objects.filter(
+                                            item=idata['item'], 
+                                            location=pdata['location'], 
+                                            expiration_date=idata['expiration_date']
+                                        )
+                if r.count() == 0:
+                    Resource.objects.create(**idata, location=pdata['location'])
+                else:
+                    q = r[0].quantity
+                    r.update(quantity = q + idata['quantity']) # it will update all element in queryset
+                idata.pop('expiration_date', None)
+                ReceiveRecord.objects.create(**pdata, **idata)
+            return HttpResponseRedirect(reverse('read', args=['ReceiveRecord']))
+
     context = {'form': form, 'formset': formset, 'model_name': 'ReceiveRecord'}
-    if request.method == 'POST':
-        context.update({'name': name})
+    if request.method == 'POST': context.update({'name': r['donator']})
     context.update(get_base_dict_for_view([chinese_name['ReceiveRecord']]))
-    return render(request, template, context)
+    return render(request, 'inventory/formset.html', context)
 
 @login_required
 def create_send_record(request):
-    ItemFormset = formset_factory(ItemSendForm, extra=1)
-    template = 'inventory/formset.html'
-    name = None
+    ItemFormset = formset_factory(ItemSendForm, extra=1, formset=ItemSendFormSet)
     if request.method == 'GET':
         form = CreateSendForm(int(request.user.foodbank_id), request.GET or None)
         formset = ItemFormset()
+
     elif request.method == 'POST':
         r = request.POST.copy()
-        name = r['household']
 
-        try:
-            r['household'] = Household.objects.get(name = r['household']).id
-        except:
-            pass
+        try: r['household'] = Household.objects.get(name = r['household']).id
+        except: pass
 
         form = CreateSendForm(int(request.user.foodbank_id), r)
         formset = ItemFormset(r)
         if form.is_valid() and formset.is_valid():
             pdata = form.cleaned_data
             try:
-                with transaction.atomic():
-                    for i, f in enumerate(formset):
-                        idata = f.cleaned_data # item data
-                        idata.pop('category', None)
-                        if 'item' not in idata:
-                            formset[i].errors['item'] = ['這個欄位是必須的']  
-                            raise MyException("This filed is necessary!")
-                        q = idata['quantity']
-                        r = Resource.objects\
-                            .filter(item=idata['item'], location=pdata['location'])\
-                            .order_by(F('expiration_date').asc(nulls_last=True))
-                        if r.count() == 0:
-                            formset[i].errors['item'] = ['無此物品']  
-                            raise MyException("No this kind of resources!")
-                        for obj in r: # 扣掉庫存
-                            if obj == r.reverse()[0] and q > obj.quantity:
-                                formset[i].errors['quantity'] = ['數量不足']
-                                raise MyException("Not enough resources!") 
-                            elif obj.quantity > q:
-                                obj.quantity = obj.quantity - q
-                                obj.save()
-                                break
-                            else:
-                                q = q - obj.quantity
-                                obj.delete()
-                        SendRecord.objects.create(**pdata, **idata)
-                    return HttpResponseRedirect(reverse('read', args=['SendRecord']))
+                for i, f in enumerate(formset):
+                    idata = f.cleaned_data
+                    idata.pop('category', None)
+                    q = idata['quantity']
+                    r = Resource.objects\
+                        .filter(item=idata['item'], location=pdata['location'])\
+                        .order_by(F('expiration_date').asc(nulls_last=True))
+                    if r.count() == 0:
+                        formset[i].errors['item'] = ['無此物品']  
+                        raise MyException('無此物品')
+                    for obj in r: # 扣掉庫存
+                        if obj == r.reverse()[0] and q > obj.quantity:
+                            formset[i].errors['quantity'] = ['數量不足']
+                            raise MyException('數量不足') 
+                        elif obj.quantity > q:
+                            obj.quantity = obj.quantity - q
+                            obj.save()
+                            break
+                        else:
+                            q = q - obj.quantity
+                            obj.delete()
+                    SendRecord.objects.create(**pdata, **idata)
+                return HttpResponseRedirect(reverse('read', args=['SendRecord']))
             except MyException:
                 pass
 
     context = {'form': form, 'formset': formset, 'model_name': 'SendRecord'}
-    if request.method == 'POST':
-        context.update({'name': name})
+    if request.method == 'POST': context.update({'name': r['household']})
     context.update(get_base_dict_for_view([chinese_name['SendRecord']]))
-    return render(request, template, context)
+    return render(request, 'inventory/formset.html', context)
 
 @login_required
 def read(request, st):
     model = apps.get_model('inventory', st)
-    template = 'inventory/read.html'
     object_list = []
     m = None
     if getattr(model, "foodbank", False):
@@ -164,11 +144,10 @@ def read(request, st):
     context = {'object_list' : readable(m),
                 'model_name': st}
     context.update(get_base_dict_for_view([chinese_name[st]]))
-    return render(request, template, context)
+    return render(request, 'inventory/read.html', context)
 
 @login_required
 def create(request, st):
-    template = 'inventory/form.html'
     if request.FILES:
         form = eval(st + 'Form')(request.POST, request.FILES or None)
     else:
@@ -180,11 +159,10 @@ def create(request, st):
         return HttpResponseRedirect(reverse('read', args=[st]))
     context = {'form': form, 'model_name': st}
     context.update(get_base_dict_for_view([chinese_name[st]]))
-    return render(request, template, context)
+    return render(request, 'inventory/form.html', context)
 
 @login_required
 def update(request, st, pk):
-    template = 'inventory/form.html'
     obj = get_object_or_404(apps.get_model('inventory', st), pk=pk)
     if request.FILES:
         form = eval(st + 'Form')(request.POST, request.FILES or None, instance=obj)
@@ -195,18 +173,17 @@ def update(request, st, pk):
         return HttpResponseRedirect(reverse('read', args=[st]))
     context = {'form': form, 'model_name': st, 'pk': pk}
     context.update(get_base_dict_for_view([chinese_name[st]]))
-    return render(request, template, context)
+    return render(request, 'inventory/form.html', context)
 
 @login_required
 def delete(request, st, pk):
-    template = 'inventory/delete.html'
     obj = get_object_or_404(apps.get_model('inventory', st), pk=pk)
     if request.method == 'POST':
         obj.delete()
         return HttpResponseRedirect(reverse('read', args=[st]))
     context = {'object': obj }
     context.update(get_base_dict_for_view([chinese_name[st]]))
-    return render(request, template, context)
+    return render(request, 'inventory/delete.html', context)
 
 ### api
 @login_required

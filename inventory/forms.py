@@ -1,9 +1,10 @@
-from .models import FoodBank, Contacter, Measure,\
+from .models import FoodBank, Contacter, Measure, Resource,\
     Donator, Household, Location, Category, Item, ReceiveRecord, SendRecord
 from django.forms import ModelForm ,formset_factory, BaseFormSet
 from django import forms
 from django.forms import DateField
 from django.core import validators
+from django.forms import formset_factory
 
 class DateInput(forms.DateInput):
     input_type = 'date'
@@ -72,7 +73,7 @@ class SendRecordForm(ModelForm):
         fields = '__all__'
         widgets = { 'date': DateInput() }
 
-###
+### 進貨表單
 
 class CreateReceiveForm(ModelForm):
     class Meta:
@@ -93,6 +94,19 @@ class ItemReceiveForm(forms.Form):
     quantity = forms.IntegerField(label="數量", min_value=1, initial=1)
     expiration_date = forms.DateField(label="有效日期", widget=DateInput(), required=False)
 
+class ItemReceiveFormSet(BaseFormSet):
+    def clean(self):
+        flag = False
+        for index, form in enumerate(self.forms):
+            data = form.cleaned_data
+            if 'item' not in data:
+                flag = True
+                self.forms[index].errors['item'] = ['這個欄位是必須的']
+        if flag:
+            raise forms.ValidationError('這個欄位是必須的')
+
+### 出貨表單
+
 class CreateSendForm(ModelForm):
     class Meta:
         model = SendRecord
@@ -110,3 +124,15 @@ class ItemSendForm(forms.Form):
     category = forms.ModelChoiceField(queryset=Category.objects.all(), label="分類", required=False)
     item = forms.ModelChoiceField(queryset=Item.objects.all(), label="物品")
     quantity = forms.IntegerField(label="數量", min_value=1, initial=1)
+
+class ItemSendFormSet(BaseFormSet):
+    def clean(self):
+        flag = False
+        for index, form in enumerate(self.forms):
+            data = form.cleaned_data
+            if 'item' not in data:
+                flag = True
+                self.forms[index].errors['item'] = ['這個欄位是必須的']
+
+        if flag:
+            raise forms.ValidationError('這個欄位是必須的')

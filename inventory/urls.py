@@ -8,11 +8,14 @@ urlpatterns = [
     path('get_items_cate/', get_items_cate, name="get_items_cate"),
     path('get_statistic_data/<int:year>/<int:month>/<int:day>', get_statistic_data, name="get_statistic_data"),
     path('get_expired/<str:date>', get_expired, name="get_expired"),
-    path('read/Resource', read_resource, name="read_resource"),
-    path('read/<str:st>', read, name='read'),
+    
     path('create/ReceiveRecord', create_receive_record, name='create_receive_record'),
     path('create/SendRecord', create_send_record, name='create_send_record'),
+    path('read/Resource', read_resource, name="read_resource"),
+    # path('update/Resource', update_resource, name="update_resource"),
+    
     path('create/<str:st>', create, name='create'),
+    path('read/<str:st>', read, name='read'),
     path('update/<str:st>/<int:pk>', update, name='update'),
     path('delete/<str:st>/<int:pk>', delete, name='delete'),
 ]

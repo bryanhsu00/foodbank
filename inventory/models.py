@@ -171,6 +171,7 @@ class ReceiveRecord(Model): #進貨紀錄
         verbose_name="捐贈據點"
     )
     date = DateField(blank=True, null=True ,verbose_name="捐贈日期")
+    # expiration_date = DateField(blank=True, null=True, verbose_name='有效日期')
 
     def __str__(self):
         return '{}, {}, {}, {}'.format(self.donator, 
@@ -201,6 +202,7 @@ class SendRecord(Model): #出貨紀錄
         verbose_name="領取據點"
     )
     date = DateField(blank=True, null=True, verbose_name="領取日期")
+    # expiration_date = DateField(blank=True, null=True, verbose_name='有效日期')
 
     def __str__(self):
         return '{}, {}, {}, {}'.format(self.household, 
