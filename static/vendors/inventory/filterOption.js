@@ -92,13 +92,7 @@ let initRecord = () => {
 let initDate = () => {
     let dateInput = document.querySelectorAll('input[type=date]');
     dateInput.forEach(element => {
-        if(element.getAttribute("value") == null || element.getAttribute("value") == ""){
-            let today = new Date();
-            today.setMonth(today.getMonth());
-            let dateStr = today.toLocaleDateString().replace("/","-").replace("/","-");
-            element.setAttribute("value", dateStr);
-        }
-        else{
+        if(element.value != ""){
             element.setAttribute("value", element.getAttribute("value").replace("/","-").replace("/","-"));
         }
     });

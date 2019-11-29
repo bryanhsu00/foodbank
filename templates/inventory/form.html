@@ -12,26 +12,26 @@
     {% csrf_token %}
   
     {% for hidden_field in form.hidden_fields %}
-      {{ hidden_field }}
+        {{ hidden_field }}
     {% endfor %}
   
     {% for field in form.visible_fields %}
-      <div class="form-group">
-        {{ field.label_tag }}
-        {% render_field field class="form-control" %}
-        {% if field.help_text %}
-          <small class="form-text text-muted">{{ field.help_text }}</small>
-        {% endif %}
-        {% for error in field.errors %}
-          <p style="color: red">{{ error }}</p>
-        {% endfor %}
-      </div>
+        <div class="form-group">
+            {{ field.label_tag }}
+            {% render_field field class="form-control" %}
+            {% if field.help_text %}
+                <small class="form-text text-muted">{{ field.help_text }}</small>
+            {% endif %}
+            {% for error in field.errors %}
+                <p style="color: red">{{ error }}</p>
+            {% endfor %}
+        </div>
     {% endfor %}
   
     <button type="submit" class="btn btn-success">提交</button>
     {% if pk %}
-      <a href="/inventory/delete/{{ model_name }}/{{ pk }}" 
-      class="btn btn-danger" role="button">刪除</a>
+        <a href="/inventory/delete/{{ model_name }}/{{ pk }}" 
+        class="btn btn-danger" role="button">刪除</a>
     {% endif %}
 
 </form>
@@ -42,13 +42,7 @@
 let initDate = () => {
     let dateInput = document.querySelectorAll('input[type=date]');
     dateInput.forEach(element => {
-        if(element.getAttribute("value") == null || element.getAttribute("value") == ""){
-            let today = new Date();
-            today.setMonth(today.getMonth());
-            let dateStr = today.toLocaleDateString().replace("/","-").replace("/","-");
-            element.setAttribute("value", dateStr);
-        }
-        else{
+        if(element.getAttribute("value") != ""){
             element.setAttribute("value", element.getAttribute("value").replace("/","-").replace("/","-"));
         }
     });
