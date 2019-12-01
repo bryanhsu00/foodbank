@@ -65,13 +65,19 @@ class ReceiveRecordForm(ModelForm):
     class Meta:
         model = ReceiveRecord
         fields = '__all__'
-        widgets = { 'date': DateInput() }
+        widgets = { 
+            'date': DateInput(),
+            'expiration_date' : DateInput()
+        }
 
 class SendRecordForm(ModelForm):
     class Meta:
         model = SendRecord
         fields = '__all__'
-        widgets = { 'date': DateInput() }
+        widgets = { 
+            'date': DateInput(),
+            'expiration_date' : DateInput()
+        }
 
 ### 進貨表單
 
