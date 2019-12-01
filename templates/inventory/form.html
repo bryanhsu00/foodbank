@@ -27,7 +27,15 @@
             {% endfor %}
         </div>
     {% endfor %}
-  
+
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.tags %}
+                <p style="color: red">{{ message }}</p>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
     <button type="submit" class="btn btn-success">提交</button>
     {% if pk %}
         <a href="/inventory/delete/{{ model_name }}/{{ pk }}" 

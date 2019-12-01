@@ -9,6 +9,11 @@ from .forms import *
 from .recordViews import *
 from datetime import datetime
 import json
+from django.contrib import messages
+from django.core.exceptions import FieldError
+
+class MyException(Exception):
+    pass
 
 chinese_name = {
     "Foodbank":"食物銀行", "Donator":"捐贈者", "Contacter":"單位聯絡人", 
@@ -72,14 +77,21 @@ def update(request, st, pk):
     else:
         form = eval(st + 'Form')(request.POST or None, instance=obj)
     if form.is_valid():
-        if st == 'SendRecord':
-            Resource.add(old_obj)
-            Resource.remove(obj)
-        elif st =='ReceiveRecord':
-            Resource.remove(old_obj)
-            Resource.add(obj)
-        form.save()
-        return HttpResponseRedirect(reverse('read', args=[st]))
+        try:
+            with transaction.atomic():
+                if st == 'SendRecord':
+                    Resource.add(old_obj)
+                    if Resource.remove(obj) == -1: raise MyException("error")
+                elif st =='ReceiveRecord':
+                    if Resource.remove(old_obj) == -1 : raise MyException("error")
+                    Resource.add(obj)
+            form.save()
+            return HttpResponseRedirect(reverse('read', args=[st]))
+
+        except MyException:
+            messages.error(request, '物品, 據點或數量有誤')
+            pass
+
     context = {'form': form, 'model_name': st, 'pk': pk}
     context.update(get_base_dict_for_view([chinese_name[st]]))
     return render(request, 'inventory/form.html', context)

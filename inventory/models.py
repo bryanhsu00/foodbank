@@ -1,6 +1,7 @@
 from django.db.models import *
 from django.utils import timezone
 from django.core.validators import MinValueValidator
+from django.core.exceptions import FieldError
 
 class FoodBank(Model):
     name = CharField(max_length=30, verbose_name='名稱')
@@ -135,9 +136,11 @@ class Resource(Model): #庫存
     @staticmethod
     def remove(obj):
         b = Resource.objects.filter(location = obj.location, item = obj.item, expiration_date = obj.expiration_date)
+        if b.count() == 0: return -1
         b = b[0]
         b.quantity -= obj.quantity
-        if b.quantity == 0: b.delete()
+        if b.quantity < 0: return -1
+        elif b.quantity == 0: b.delete()
         else: b.save()
 
     @staticmethod
@@ -148,6 +151,7 @@ class Resource(Model): #庫存
         else:
             a = a[0]
             a.quantity += obj.quantity
+            a.save()
 
 class ReceiveRecord(Model): #進貨紀錄
     donator = ForeignKey(
@@ -176,8 +180,8 @@ class ReceiveRecord(Model): #進貨紀錄
         null=True, 
         verbose_name="捐贈據點"
     )
-    date = DateField(null=True ,verbose_name="捐贈日期")
     expiration_date = DateField(null=True, verbose_name='有效日期')
+    date = DateField(null=True ,verbose_name="捐贈日期")
 
     def __str__(self):
         return '{}, {}, {}, {}'.format(self.donator, 
@@ -204,8 +208,8 @@ class SendRecord(Model): #出貨紀錄
         null=True, 
         verbose_name="領取據點"
     )
-    date = DateField(null=True, verbose_name="領取日期")
     expiration_date = DateField(null=True, verbose_name='有效日期')
+    date = DateField(null=True, verbose_name="領取日期")
 
     def __str__(self):
         return '{}, {}, {}, {}'.format(self.household, 
