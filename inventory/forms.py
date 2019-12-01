@@ -84,15 +84,13 @@ class CreateReceiveForm(ModelForm):
     def __init__(self, foodbank_id, *args, **kwargs):
         super(CreateReceiveForm, self).__init__(*args, **kwargs)
         self.fields['location'].queryset = Location.objects.filter(foodbank_id = foodbank_id)
-        self.fields['location'].required = True
         self.fields['donator'].queryset = Donator.objects.filter(foodbank_id = foodbank_id)
-        self.fields['donator'].required = True
 
 class ItemReceiveForm(forms.Form):
     category = forms.ModelChoiceField(queryset=Category.objects.all(), label="分類", required=False)
     item = forms.ModelChoiceField(queryset=Item.objects.all(), label="物品")
     quantity = forms.IntegerField(label="數量", min_value=1, initial=1)
-    expiration_date = forms.DateField(label="有效日期", widget=DateInput(), required=False)
+    expiration_date = forms.DateField(label="有效日期", widget=DateInput())
 
 class ItemReceiveFormSet(BaseFormSet):
     def clean(self):
@@ -102,6 +100,11 @@ class ItemReceiveFormSet(BaseFormSet):
             if 'item' not in data:
                 flag = True
                 self.forms[index].errors['item'] = ['這個欄位是必須的']
+
+            if 'expiration_date' not in data:
+                flag = True
+                self.forms[index].errors['expiration_date'] = ['這個欄位是必須的']
+
         if flag:
             raise forms.ValidationError('這個欄位是必須的')
 
@@ -116,9 +119,7 @@ class CreateSendForm(ModelForm):
     def __init__(self, foodbank_id, *args, **kwargs):
         super(CreateSendForm, self).__init__(*args, **kwargs)
         self.fields['location'].queryset = Location.objects.filter(foodbank_id = foodbank_id)
-        self.fields['location'].required = True
         self.fields['household'].queryset = Household.objects.filter(foodbank_id = foodbank_id)
-        self.fields['household'].required = True
 
 class ItemSendForm(forms.Form):
     category = forms.ModelChoiceField(queryset=Category.objects.all(), label="分類", required=False)

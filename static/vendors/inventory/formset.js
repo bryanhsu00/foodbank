@@ -7,7 +7,6 @@ function updateElementIndex(el, prefix, ndx) {
 }
 
 function cloneMore(selector, prefix) {
-    console.log(selector, prefix);
     var newElement = $(selector).clone(true);
     var total = $('#id_' + prefix + '-TOTAL_FORMS').val();
     newElement.find(':input:not([type=button]):not([type=submit]):not([type=reset])').each(function() {
@@ -33,7 +32,7 @@ function cloneMore(selector, prefix) {
     .removeClass('btn-success').addClass('btn-danger')
     .removeClass('add-form-row').addClass('remove-form-row')
     .val('-');
-    resetAllOption(total);
+    resetAllBind(total);
     giveOptions(total);
     return false;
 }
@@ -51,7 +50,7 @@ function deleteForm(prefix, btn) {
         }
     }
     total--;
-    resetAllOption(total);
+    resetAllBind(total);
     return false;
 }
 

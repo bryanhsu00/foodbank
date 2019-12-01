@@ -1,11 +1,6 @@
 let data;
 let personData;
 
-fetch('/inventory/get_items_cate')
-    .then(res => res.json())
-    .then(res => data = res)
-    .catch(err => { throw err });
-
 let getAllElement = () => {
     let res = []
     for(let index in data){
@@ -19,9 +14,9 @@ let getAllElement = () => {
     return res;
 }
 
-let giveOptions = (total) => {
-    total --;
-    let item = document.getElementById(`id_form-${total}-item`);
+let giveOptions = (index) => {
+    index --;
+    let item = document.getElementById(`id_form-${index}-item`);
     let arr = getAllElement();
     let content = "";
     content += `<option value="">----------</option>`;
@@ -44,7 +39,7 @@ let changeOption = (id) => {
     item.innerHTML = content;
 }
 
-let resetAllOption = (total) => { // formset中的form數量若有更動所有event需重新bind
+let resetAllBind = (total) => { // formset中的form數量若有更動所有event需重新bind
     for(let i=0; i<total; i++){
         document.getElementById(`id_form-${i}-category`)
         .addEventListener("change", () => {
@@ -98,13 +93,12 @@ let initDate = () => {
     });
 }
 
-let initOption = () => {
-    document.getElementById("id_form-0-category")
-    .addEventListener("change", () => {
-        changeOption("id_form-0"); 
-    });
-}
-
-initOption();
+let formCount = document.getElementById('id_form-TOTAL_FORMS').value;
 initDate();
 initRecord();
+resetAllBind(formCount);
+fetch('/inventory/get_items_cate')
+    .then(res => res.json())
+    .then(res => data = res)
+    .catch(err => { throw err });
+

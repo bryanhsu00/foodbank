@@ -29,7 +29,6 @@ class Donator(Model):
     foodbank = ForeignKey(
         FoodBank,
         on_delete = SET_NULL,
-        blank=True, 
         null=True,
         verbose_name="食物銀行"
     )
@@ -41,7 +40,6 @@ class Contacter(Model):
     donator = ForeignKey(
         Donator,
         on_delete = SET_NULL,
-        blank=True, 
         null=True,
         verbose_name='所屬單位'
     )
@@ -57,14 +55,13 @@ class Household(Model): #關懷戶
     home_number = CharField(max_length=30, blank=True, verbose_name='市話')
     address = CharField(max_length=50, blank=True, verbose_name='地址')
     population = PositiveIntegerField(default=1, verbose_name='人數', validators=[MinValueValidator(1)])
-    start_date = DateField(blank=True, null=True, verbose_name='開始日期')
-    end_date = DateField(blank=True, null=True, verbose_name='結束日期')
+    start_date = DateField(null=True, verbose_name='開始日期')
+    end_date = DateField(null=True, verbose_name='結束日期')
     # need_delivery = BooleanField(default=False, verbose_name='配送')
     # authentication_key = CharField(max_length=30, blank=True, verbose_name='識別碼')
     foodbank = ForeignKey(
         FoodBank,
         on_delete = SET_NULL,
-        blank=True, 
         null=True,
         verbose_name="食物銀行"
     )
@@ -77,7 +74,6 @@ class Location(Model): #據點
     foodbank = ForeignKey(
         FoodBank,
         on_delete = SET_NULL,
-        blank=True, 
         null=True,
         verbose_name="食物銀行"
     )
@@ -102,15 +98,13 @@ class Item(Model): #物品名稱
     name = CharField(max_length=30, verbose_name='物品名稱')
     category = ForeignKey(
         Category,
-        on_delete = SET_NULL,
-        blank=True, 
+        on_delete = SET_NULL, 
         null=True,
         verbose_name='物品分類'
     )
     measure = ForeignKey(
         Measure,
         on_delete = SET_NULL,
-        blank=True, 
         null=True,
         verbose_name='單位'
     )
@@ -123,42 +117,55 @@ class Resource(Model): #庫存
     item = ForeignKey(
         Item,
         on_delete = SET_NULL,
-        blank=True, 
         null=True,
         verbose_name='物品名稱',
     )
     location = ForeignKey(
         Location,
         on_delete = SET_NULL,
-        blank=True, 
         null=True,
-	    verbose_name='據點'
+        verbose_name='據點'
     )
     quantity = IntegerField(default=1, verbose_name='數量')
-    expiration_date = DateField(blank=True, null=True, verbose_name='有效日期')
+    expiration_date = DateField(verbose_name='有效日期')
 
     def __str__(self):
         return '{}, {}, {}, {}'.format(self.item, self.location, self.quantity, self.expiration_date)
+
+    @staticmethod
+    def remove(obj):
+        b = Resource.objects.filter(location = obj.location, item = obj.item, expiration_date = obj.expiration_date)
+        b = b[0]
+        b.quantity -= obj.quantity
+        if b.quantity == 0: b.delete()
+        else: b.save()
+
+    @staticmethod
+    def add(obj):
+        a = Resource.objects.filter(location = obj.location, item = obj.item, expiration_date = obj.expiration_date)
+        if a.count() == 0:
+            Resource.objects.create(location = obj.location, item = obj.item, expiration_date = obj.expiration_date, quantity = obj.quantity)
+        else:
+            a = a[0]
+            a.quantity += obj.quantity
 
 class ReceiveRecord(Model): #進貨紀錄
     donator = ForeignKey(
         Donator,
         on_delete = SET_NULL,
-        blank=True, 
         null=True,
         verbose_name='捐贈者'
     )
     contacter = ForeignKey(
         Contacter,
         on_delete = SET_NULL,
-        blank=True, 
+        blank=True,
         null=True,
         verbose_name="單位聯絡人"
     )
     item = ForeignKey(
         Item,
-        on_delete = SET_NULL,
-        blank=True, 
+        on_delete = SET_NULL, 
         null=True,
         verbose_name='物品名稱'
     )
@@ -166,12 +173,11 @@ class ReceiveRecord(Model): #進貨紀錄
     location = ForeignKey(
         Location,
         on_delete = SET_NULL,
-        blank=True, 
         null=True, 
         verbose_name="捐贈據點"
     )
-    date = DateField(blank=True, null=True ,verbose_name="捐贈日期")
-    # expiration_date = DateField(blank=True, null=True, verbose_name='有效日期')
+    date = DateField(null=True ,verbose_name="捐贈日期")
+    expiration_date = DateField(null=True, verbose_name='有效日期')
 
     def __str__(self):
         return '{}, {}, {}, {}'.format(self.donator, 
@@ -181,14 +187,12 @@ class SendRecord(Model): #出貨紀錄
     household = ForeignKey(
         Household,
         on_delete = SET_NULL,
-        blank=True, 
         null=True,
         verbose_name='關懷戶'
     )
     item = ForeignKey(
         Item,
         on_delete = SET_NULL,
-        blank=True, 
         null=True,
         verbose_name='物品名稱'
     )
@@ -197,12 +201,11 @@ class SendRecord(Model): #出貨紀錄
     location = ForeignKey(
         Location,
         on_delete = SET_NULL,
-        blank=True, 
         null=True, 
         verbose_name="領取據點"
     )
-    date = DateField(blank=True, null=True, verbose_name="領取日期")
-    # expiration_date = DateField(blank=True, null=True, verbose_name='有效日期')
+    date = DateField(null=True, verbose_name="領取日期")
+    expiration_date = DateField(null=True, verbose_name='有效日期')
 
     def __str__(self):
         return '{}, {}, {}, {}'.format(self.household, 

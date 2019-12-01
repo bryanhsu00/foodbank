@@ -78,7 +78,6 @@ input[type=number]{
 <script src="{% static 'vendors/jsQR/docs/jsQR.js' %}"></script>
 <script src="{% static 'vendors/inventory/formsetQR.js' %}"></script>
 <script>
-resetAllOption(document.getElementById('id_form-TOTAL_FORMS').value);
 let d = document.querySelectorAll('.add-form-row');
 for(let i=0; i<d.length-1; i++){ //讓按鈕變成原本的樣子
     d[i].className = "form-control btn btn-danger remove-form-row";
