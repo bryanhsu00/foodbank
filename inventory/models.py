@@ -31,7 +31,8 @@ class Donator(Model):
         FoodBank,
         on_delete = SET_NULL,
         null=True,
-        verbose_name="食物銀行"
+        verbose_name="食物銀行",
+        blank=True,
     )
 
     def __str__(self):
@@ -64,6 +65,7 @@ class Household(Model): #關懷戶
         FoodBank,
         on_delete = SET_NULL,
         null=True,
+        blank=True,
         verbose_name="食物銀行"
     )
 
@@ -76,7 +78,8 @@ class Location(Model): #據點
         FoodBank,
         on_delete = SET_NULL,
         null=True,
-        verbose_name="食物銀行"
+        verbose_name="食物銀行",
+        blank=True,
     )
     address = CharField(max_length=50, blank=True, verbose_name='地址')
 
