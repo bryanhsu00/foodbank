@@ -20,7 +20,7 @@ from django.conf.urls.static import static
 from django.conf import settings
 
 urlpatterns = [
-    path('', lambda request: redirect('inventory/', permanent=False)),
+    path('', lambda request: redirect('user/', permanent=False)),
     path('inventory/', include('inventory.urls')),
     path('user/', include('django.contrib.auth.urls')),
     path('user/', include('user.urls')),

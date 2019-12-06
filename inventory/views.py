@@ -23,10 +23,10 @@ chinese_name = {
 }
 
 @login_required
-def index(request):
+def dashboard(request):
     context = get_base_dict_for_view([])
     context.update({"username" : request.user.username})
-    return render(request, 'inventory/index.html', context)
+    return render(request, 'inventory/dashboard.html', context)
 
 @login_required
 def read_resource(request):
