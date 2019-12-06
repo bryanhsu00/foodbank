@@ -1,4 +1,4 @@
-# food_bank
+# foodbank
 
 ![Python Version](https://img.shields.io/badge/Python-3.6-green.svg)
 ![Django Version](https://img.shields.io/badge/django-2.2.4-green.svg)
@@ -26,25 +26,23 @@
 │   └── views.py
 ├── manage.py
 ├── media
-│   ├── images/
-│   └── pci.jpg
+│   └── images/
 ├── README.md
-├── remove_cache.py
-├── runserver.py
-├── server.py
-├── static/
-├── stopserver.py
+├── static
+│   └── src
+│       ├── bg.jpg
+│       └── no_img.png
 ├── templates
 │   ├── 404.html
 │   ├── 500.html
 │   ├── backstage/
-│   ├── home.html
+│   ├── index.html
 │   ├── inventory
+│   │   ├── dashboard.html
 │   │   ├── delete.html
 │   │   ├── detail.html
 │   │   ├── form.html
 │   │   ├── formset.html
-│   │   ├── index.html
 │   │   ├── read.html
 │   │   └── readResource.html
 │   ├── message.html
@@ -60,7 +58,6 @@
     ├── tests.py
     ├── urls.py
     └── views.py
-
 ```
 ## 套件
 
