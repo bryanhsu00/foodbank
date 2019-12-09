@@ -39,7 +39,7 @@ def readable(query_set, flag=None):
         result.append(tmp)
 
     model_name = query_set.model.__name__
-    if model_name in ['ReceiveRecord', 'SendRecord'] or flag == True:
+    if model_name in ['ReceiveRecord', 'SendRecord'] or flag == True: #顯示物品單位
         for q, r in zip(query_set
                         .annotate(measure=F('item__measure__name'))
                         .values("measure"), 

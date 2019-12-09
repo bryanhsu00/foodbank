@@ -111,7 +111,7 @@ def delete(request, st, pk):
     return render(request, 'inventory/delete.html', context)
 
 ### api
-@login_required
+@login_required #取得某一個table全部資料
 def api(request, st):
     model = apps.get_model('inventory', st)
     data = None
@@ -121,8 +121,8 @@ def api(request, st):
         data = model.objects.values()
     return JsonResponse(list(data), safe=False)
 
-@login_required
-def get_items_cate(request): #取得所有的分類跟其對應的商品
+@login_required #取得所有的分類跟其對應的商品
+def get_items_cate(request):
     res = {}
     l = list(Item.objects.all().values("id", "name", "category_id"))
     for d in l:
@@ -132,7 +132,7 @@ def get_items_cate(request): #取得所有的分類跟其對應的商品
             res[d['category_id']] = [{'id':d['id'], 'name':d['name']}]
     return JsonResponse(res)
 
-@login_required
+@login_required #取得統計資料
 def get_statistic_data(request, year, month, day):
     loc_list = [i.id for i in Location.objects.filter(foodbank_id = request.user.foodbank_id)]
     models = ['Resource', 'ReceiveRecord', 'SendRecord']
@@ -173,7 +173,7 @@ def get_statistic_data(request, year, month, day):
 
     return JsonResponse(final, safe=False)
 
-@login_required
+@login_required #取得即將到期之物品
 def get_expired(request, date):
     exp_date = datetime.strptime(date, '%Y-%m-%d').date()
     loc_list = [i.id for i in Location.objects.filter(foodbank_id = request.user.foodbank_id)]
@@ -182,14 +182,15 @@ def get_expired(request, date):
                              .order_by('expiration_date')
     return JsonResponse(readable(result, flag=True), safe=False)
 
-@login_required
-def get_resource(request, loc, cate): #取得據點與分類的庫存
+@login_required #取得據點與分類的加總之後庫存
+def get_resource(request, loc, cate): 
     loc_list = [i.id for i in Location.objects.filter(foodbank_id = request.user.foodbank_id)]
-    r = Resource.objects.all().filter(location__in = loc_list)
+    r = Resource.objects.filter(location__in = loc_list)
     if loc != "None": r = r.filter(location = int(loc))
     if cate != "None": r = r.filter(item__category = int(cate))
 
     r = r.values('item').annotate(
+                            iid = F('item_id'),
                             rsum = Sum('quantity'), 
                             iname = F('item__name'), 
                             rdate = Min('expiration_date'), 
@@ -198,9 +199,17 @@ def get_resource(request, loc, cate): #取得據點與分類的庫存
     result = []
     for i in r:
         result.append({
+            'iid': i['iid'],
             'rsum':  str(i['rsum']) + " " + i['measure'],
             'iname': i['iname'],
             'rdate': i['rdate']
         })
 
     return JsonResponse({"data" : result}, safe=False)
+
+@login_required #取得物品之所有數量與有效日期
+def get_resource_detail(request, itemId, locationId):
+    print(itemId, locationId)
+    result = Resource.objects.filter(item_id = itemId)
+    if locationId != 0: result = result.filter(location_id = locationId)
+    return JsonResponse(readable(result, flag=True), safe=False)

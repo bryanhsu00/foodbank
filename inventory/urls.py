@@ -5,6 +5,7 @@ urlpatterns = [
     path('', dashboard, name='dashboard'),
     path('api/<str:st>', api, name="api"),
 
+    path('get_resource_detail/<int:itemId>/<int:locationId>', get_resource_detail, name="get_resource_detail"),
     path('get_resource/<str:loc>/<str:cate>', get_resource, name="get_resource"),
     path('get_items_cate', get_items_cate, name="get_items_cate"),
     path('get_statistic_data/<int:year>/<int:month>/<int:day>', get_statistic_data, name="get_statistic_data"),
