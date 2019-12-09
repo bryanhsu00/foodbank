@@ -48,9 +48,54 @@ let initDataTable = () => {
             { "data": "iname" },
             { "data": "rsum" },
             { "data": "rdate" },
+            {
+                data: "iid",
+                orderable: false,
+                render: function (data) {
+                    return `<button 
+                                type="button"
+                                class="btn btn-outline-info" 
+                                data-toggle="modal" 
+                                data-target="#exampleModal"
+                                data-itemid="${data}"
+                                onclick=""
+                            >
+                                詳細
+                            </button>`
+                }
+            }
         ]
     });
 }
+
+$("#exampleModal").on("show.bs.modal", function(e){
+    let itemId = e.relatedTarget.getAttribute("data-itemid");
+    let locationId = document.getElementById('location').value;
+    if(locationId == "") locationId = 0;
+    fetch(`/inventory/get_resource_detail/${itemId}/${locationId}`)
+        .then(res => res.json())
+        .then(res => {
+            let tbl = `<table class="table table-striped">
+                        <tr>
+                            <th>物品名稱</th>
+                            <th>據點</th>
+                            <th>數量</th>
+                            <th>有效日期</th>
+                        </tr>`;
+            res.forEach(element => {
+                tbl += `<tr>
+                            <td>${element['物品名稱']}</td>
+                            <td>${element['據點']}</td>
+                            <td>${element['數量']}</td>
+                            <td>${element['有效日期']}</td>
+                        </tr>`
+            });
+            tbl += "</table>"
+            document.querySelector(".modal-body").innerHTML = tbl;
+        })
+        .then($('#exampleModal').modal('show'));
+
+});
 
 let initOptions = () => {
     let parent = document.querySelectorAll(".row")[0];
