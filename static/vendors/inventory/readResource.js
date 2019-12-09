@@ -96,6 +96,11 @@ let initOptions = () => {
 }
 
 $(document).ready(function(){
+    if(window.mobilecheck()){
+        let style = document.createElement('style');
+        style.innerHTML = "table {display: block; overflow-x: auto; white-space: nowrap;}";
+        document.head.appendChild(style);
+    }
     initDataTable();
     initOptions();
 });

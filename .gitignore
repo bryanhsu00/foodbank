@@ -68,4 +68,5 @@ __pycache__
 nohup.out
 venv
 
+media/images
 db.sqlite3
