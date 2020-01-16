@@ -3,6 +3,18 @@
 ![Python Version](https://img.shields.io/badge/Python-3.6-green.svg)
 ![Django Version](https://img.shields.io/badge/django-2.2.4-green.svg)
 
+## 說明
+
+埔里地方食物銀行進銷存管理系統
+
+## Usage
+
+```
+python3 manage.py makemigrations
+python3 manage.py migrate
+python3 manage.py createsuperuser
+```
+
 ## 結構
 
 ```
