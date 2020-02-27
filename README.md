@@ -18,6 +18,12 @@ python3 manage.py runserver
 ```
 then goto 127.0.0.1:8000 you will see the webpage
 
+if you gonna to use this system, 
+1. goto 127.0.0.1:8000/admin create a new foodbank 
+2. goto the user editing section
+3. add your user to the foodbank
+
+
 ## 結構
 
 ```
