@@ -77,6 +77,6 @@ then goto 127.0.0.1:8000 you will see the webpage
 ## 套件
 
 ```
-├── Django
+├── Django 2.2.4
 ├── django-widget-tweaks 
 ```
